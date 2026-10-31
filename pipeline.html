@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LumiShade — Pipeline</title>
+<meta name="description" content="LumiShade render pass pipeline">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d12; --panel: #12151d; --panel2: #171b25; --line: #232837;
+    --text: #e8eaf0; --muted: #8b92a5; --accent: #f2c66d;
+    --full: #f2c66d; --half: #7fb7ff; --quarter: #8fd6a8; --eighth: #c79bff; --tiny: #ff9b8a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', system-ui, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+  header { position: sticky; top: 0; z-index: 20; background: rgba(11,13,18,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-weight: 800; letter-spacing: .08em; font-size: 20px; text-decoration: none; }
+  .logo span { color: var(--accent); }
+  nav { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-size: 14px; font-family: inherit; }
+  .btn:hover { border-color: var(--accent); }
+  .lang { color: var(--muted); font-size: 13px; }
+  .lang button { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; padding: 4px 6px; }
+  .lang button.on { color: var(--text); font-weight: 600; }
+
+  .intro { padding: 44px 0 18px; }
+  .intro h1 { font-size: clamp(28px, 4.5vw, 44px); margin: 0 0 10px; font-weight: 800; }
+  .intro p { color: var(--muted); line-height: 1.75; margin: 0; max-width: 820px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 14px; margin: 22px 0 6px; font-size: 13px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend em { font-style: normal; }
+
+  .res { display: inline-block; font-style: normal; min-width: 42px; text-align: center; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; border: 1px solid currentColor; letter-spacing: .02em; flex-shrink: 0; }
+  .r-full { color: var(--full); } .r-half { color: var(--half); } .r-q { color: var(--quarter); } .r-e { color: var(--eighth); } .r-t { color: var(--tiny); }
+
+  /* 공용 데이터 층 */
+  .shared { margin: 26px 0 0; border: 1px dashed #3a4258; border-radius: 14px; padding: 16px; background: linear-gradient(180deg, rgba(127,183,255,.05), transparent); }
+  .shared h2 { margin: 0 0 4px; font-size: 18px; }
+  .shared .sub { color: var(--muted); font-size: 13px; margin-bottom: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 13px; display: flex; gap: 8px; align-items: center; }
+  .chip b { font-weight: 600; }
+
+  /* 단계 */
+  .flow { margin: 10px 0 40px; }
+  .arrow { display: flex; justify-content: center; height: 34px; align-items: center; color: #4b5470; font-size: 18px; }
+  .stage { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .stage > .head { display: flex; align-items: baseline; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--line); background: var(--panel2); flex-wrap: wrap; }
+  .stage .num { color: var(--accent); font-weight: 800; font-size: 14px; }
+  .stage .name { font-weight: 800; font-size: 17px; }
+  .stage .mod { color: var(--muted); font-size: 12px; font-family: ui-monospace, Consolas, monospace; }
+  .stage .what { width: 100%; color: var(--muted); font-size: 13px; line-height: 1.6; margin-top: 2px; }
+  .passes { list-style: none; margin: 0; padding: 6px 0; }
+  .passes li { display: flex; gap: 12px; padding: 8px 16px; align-items: flex-start; font-size: 14px; line-height: 1.55; }
+  .passes li + li { border-top: 1px solid rgba(255,255,255,.035); }
+  .passes .pn { font-weight: 600; min-width: 168px; flex-shrink: 0; }
+  .passes .pd { color: var(--muted); }
+  .passes li.out { background: rgba(242,198,109,.06); }
+  .passes li.out .pn { color: var(--accent); }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 16px 14px; }
+  .tag { font-size: 11px; color: #c9cfdd; background: #1d2230; border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px; }
+
+  section.notes { margin: 0 0 64px; }
+  section.notes h2 { font-size: 22px; margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+  .card h3 { margin: 0 0 6px; font-size: 15px; color: var(--accent); }
+  .card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
+
+  @media (max-width: 640px) {
+    .passes li { flex-direction: column; gap: 4px; }
+    .passes .pn { min-width: 0; }
+    .pnrow { display: flex; gap: 8px; align-items: center; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="./">LUMI<span>SHADE</span></a>
+    <nav>
+      <div class="lang"><button data-lang="ko">한국어</button>|<button data-lang="en">EN</button></div>
+      <a class="btn" href="./#gallery" data-ko="비교 보기" data-en="Compare">비교 보기</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1 data-ko="렌더 파이프라인" data-en="Render pipeline">렌더 파이프라인</h1>
+    <p data-ko="LumiShade는 ReShade 기법 하나 안에서 약 120개의 패스가 순서대로 실행됩니다. 먼저 깊이 버퍼와 화면을 분석해 모든 모듈이 함께 쓰는 장면 정보를 만들고, 색 → 조명 → 반사광 → 공기 빛 → 반사 → 렌즈 → 필름 순서로 합성합니다. 무거운 계산은 낮은 해상도에서 하거나 두 프레임에 나눠 하고, 장면 통계는 작은 격자에서 병렬로 모읍니다."
+       data-en="LumiShade runs about 120 passes in order inside a single ReShade technique. It first analyses the depth buffer and the frame to build scene data shared by every module, then composites colour → lighting → bounce → air light → reflection → lens → film. Heavy work runs at reduced resolution or is split across two frames, and scene statistics are gathered in parallel on small grids.">LumiShade는 ReShade 기법 하나 안에서 약 120개의 패스가 순서대로 실행됩니다. 먼저 깊이 버퍼와 화면을 분석해 모든 모듈이 함께 쓰는 장면 정보를 만들고, 색 → 조명 → 반사광 → 공기 빛 → 반사 → 렌즈 → 필름 순서로 합성합니다. 무거운 계산은 낮은 해상도에서 하거나 두 프레임에 나눠 하고, 장면 통계는 작은 격자에서 병렬로 모읍니다.</p>
+    <div class="legend">
+      <span><i class="res r-full">FULL</i> <em data-ko="원해상도" data-en="full resolution">원해상도</em></span>
+      <span><i class="res r-half">½</i> <em data-ko="반해상도" data-en="half">반해상도</em></span>
+      <span><i class="res r-q">¼</i> <em data-ko="1/4 해상도" data-en="quarter">1/4 해상도</em></span>
+      <span><i class="res r-e">⅛</i> <em data-ko="1/8 해상도" data-en="eighth">1/8 해상도</em></span>
+      <span><i class="res r-t">1×1</i> <em data-ko="격자·요약값 (장면 상태)" data-en="grid / summary (scene state)">격자·요약값 (장면 상태)</em></span>
+    </div>
+  </section>
+
+  <div class="shared">
+    <h2 data-ko="공용 장면 정보" data-en="Shared scene data">공용 장면 정보</h2>
+    <div class="sub" data-ko="맨 처음 한 번 계산해 모든 모듈이 같이 읽는 값 (모듈마다 따로 계산하지 않음)" data-en="Computed once at the start and read by every module">맨 처음 한 번 계산해 모든 모듈이 같이 읽는 값 (모듈마다 따로 계산하지 않음)</div>
+    <div class="chips">
+      <div class="chip"><i class="res r-full">FULL</i><b data-ko="선형 깊이" data-en="Linear depth">선형 깊이</b></div>
+      <div class="chip"><i class="res r-half">½</i><b data-ko="노멀 (깊이에서 복원)" data-en="Normals (from depth)">노멀 (깊이에서 복원)</b></div>
+      <div class="chip"><i class="res r-t">1×1</i><b data-ko="깊이 방향 판정" data-en="Depth orientation">깊이 방향 판정</b></div>
+      <div class="chip"><i class="res r-t">1×1</i><b data-ko="캐릭터 거리 추적" data-en="Character tracking">캐릭터 거리 추적</b></div>
+      <div class="chip"><i class="res r-t">1×1</i><b data-ko="컷 전환·깊이 안정도" data-en="Cut & depth stability">컷 전환·깊이 안정도</b></div>
+      <div class="chip"><i class="res r-t">1×1</i><b data-ko="상황 코드 (메뉴·빈 깊이·클로즈업)" data-en="Situation code (menu / empty depth / close-up)">상황 코드 (메뉴·빈 깊이·클로즈업)</b></div>
+      <div class="chip"><i class="res r-t">1×1</i><b data-ko="장면 노출 (측광)" data-en="Scene exposure (metering)">장면 노출 (측광)</b></div>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="arrow">▼</div>
+
+    <!-- 1 -->
+    <div class="stage">
+      <div class="head"><span class="num">01</span><span class="name" data-ko="깊이·장면 분석" data-en="Depth & scene analysis">깊이·장면 분석</span><span class="mod">DepthOrient</span>
+        <div class="what" data-ko="원신 깊이 버퍼를 효과가 쓸 수 있는 형태로 정리하고, 장면이 어떤 상황인지 판정합니다." data-en="Turns Genshin's depth buffer into a usable form and classifies what situation the scene is in.">원신 깊이 버퍼를 효과가 쓸 수 있는 형태로 정리하고, 장면이 어떤 상황인지 판정합니다.</div></div>
+      <ul class="passes">
+        <li><i class="res r-full">FULL</i><span class="pn" data-ko="원본 저장" data-en="Frame save">원본 저장</span><span class="pd" data-ko="로딩·단색 화면일 때 마지막에 원본으로 되돌리기 위한 사본" data-en="Copy used to restore the original on loading / flat screens">로딩·단색 화면일 때 마지막에 원본으로 되돌리기 위한 사본</span></li>
+        <li><i class="res r-t">64×36</i><span class="pn" data-ko="깊이 방향 판정" data-en="Orientation vote">깊이 방향 판정</span><span class="pd" data-ko="색 경계와 깊이 경계가 겹치는 정도로 버퍼 상하 반전을 판정 (행 단위 병렬 합 → 1.5초 투표)" data-en="Detects a flipped buffer from colour/depth edge agreement (parallel row sums → 1.5 s vote)">색 경계와 깊이 경계가 겹치는 정도로 버퍼 상하 반전을 판정 (행 단위 병렬 합 → 1.5초 투표)</span></li>
+        <li><i class="res r-full">FULL</i><span class="pn" data-ko="선형 깊이 + 빈 프레임 메우기" data-en="Linear depth + gap fill">선형 깊이 + 빈 프레임 메우기</span><span class="pd" data-ko="컷신이 깊이를 한 프레임씩 비우는 경우, 칸 단위로 직전 깊이를 붙잡아 깜빡임 방지" data-en="Holds the last good depth per cell when cutscenes drop single depth frames">컷신이 깊이를 한 프레임씩 비우는 경우, 칸 단위로 직전 깊이를 붙잡아 깜빡임 방지</span></li>
+        <li><i class="res r-half">½</i><span class="pn" data-ko="공용 노멀" data-en="Shared normals">공용 노멀</span><span class="pd" data-ko="깊이에서 시점 공간 노멀 복원 (모든 모듈 공용)" data-en="View-space normals reconstructed from depth (used by all modules)">깊이에서 시점 공간 노멀 복원 (모든 모듈 공용)</span></li>
+        <li><i class="res r-t">1×1</i><span class="pn" data-ko="캐릭터 추적" data-en="Character tracking">캐릭터 추적</span><span class="pd" data-ko="화면 중앙 8×8 표본에서 바닥을 빼고 가장 가까운 인물 거리를 잠금" data-en="Locks the nearest figure distance from an 8×8 centre sample, rejecting floor">화면 중앙 8×8 표본에서 바닥을 빼고 가장 가까운 인물 거리를 잠금</span></li>
+        <li><i class="res r-t">1×1</i><span class="pn" data-ko="상황·안정도" data-en="Situation & stability">상황·안정도</span><span class="pd" data-ko="컷 전환, 깊이 버퍼 싸움(A-B-A), 메뉴, 단색 화면을 감지해 효과를 부드럽게 끄고 켬" data-en="Detects cuts, A-B-A depth fights, menus and flat frames to fade effects out and in">컷 전환, 깊이 버퍼 싸움(A-B-A), 메뉴, 단색 화면을 감지해 효과를 부드럽게 끄고 켬</span></li>
+      </ul>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 2 -->
+    <div class="stage">
+      <div class="head"><span class="num">02</span><span class="name" data-ko="색 보정" data-en="Colour grade">색 보정</span><span class="mod">LUT</span>
+        <div class="what" data-ko="3D LUT로 기본 색을 잡고, 거리와 밝기에 따라 보정합니다." data-en="Base colour via a 3D LUT, corrected by distance and brightness.">3D LUT로 기본 색을 잡고, 거리와 밝기에 따라 보정합니다.</div></div>
+      <ul class="passes">
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="LUT 합성" data-en="LUT composite">LUT 합성</span><span class="pd" data-ko="3D LUT · 경계 보존 거리 블러로 원경만 채도 완화 · 암부 밝기 보호 · 그늘의 보라 기운 걷기 (진한 보라는 보존)" data-en="3D LUT · edge-aware distance blur to soften far saturation · shadow brightness keep · removes purple cast in shade (keeps real purples)">3D LUT · 경계 보존 거리 블러로 원경만 채도 완화 · 암부 밝기 보호 · 그늘의 보라 기운 걷기 (진한 보라는 보존)</span></li>
+      </ul>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 3 -->
+    <div class="stage">
+      <div class="head"><span class="num">03</span><span class="name" data-ko="형태·조명" data-en="Form & lighting">형태·조명</span><span class="mod">EnhancedLight</span>
+        <div class="what" data-ko="깊이로 면의 방향과 가림을 읽어 툰 렌더링에 형태 음영을 더합니다. 캐릭터와 배경을 구분해 각각 다르게 처리합니다." data-en="Reads surface direction and occlusion from depth to add form shading to toon rendering, treating characters and background differently.">깊이로 면의 방향과 가림을 읽어 툰 렌더링에 형태 음영을 더합니다. 캐릭터와 배경을 구분해 각각 다르게 처리합니다.</div></div>
+      <ul class="passes">
+        <li><i class="res r-q">¼</i><span class="pn" data-ko="주변광 지도" data-en="Ambient map">주변광 지도</span><span class="pd" data-ko="캐릭터를 뺀 주변 색과 밝은 빛 지도 (밉맵) → ⅛ 해상도에서 6단계로 미리 흐림" data-en="Surrounding colour and hot-light maps without characters (mipmapped) → 6 pre-blurred ⅛ fields">캐릭터를 뺀 주변 색과 밝은 빛 지도 (밉맵) → ⅛ 해상도에서 6단계로 미리 흐림</span></li>
+        <li><i class="res r-half">½</i><span class="pn" data-ko="형태 노멀" data-en="Shape normals">형태 노멀</span><span class="pd" data-ko="넓은 반경 노멀 + 깊이 인식 블러 → 로우폴리 면이 꺾여 보이지 않는 매끈한 노멀" data-en="Wide-radius normals + depth-aware blur → smooth normals that hide low-poly facets">넓은 반경 노멀 + 깊이 인식 블러 → 로우폴리 면이 꺾여 보이지 않는 매끈한 노멀</span></li>
+        <li><i class="res r-e">⅛</i><span class="pn" data-ko="넓은 노멀" data-en="Wide normals">넓은 노멀</span><span class="pd" data-ko="±200px 경계 정지 블러 → 큰 바위·벽의 면 계단 제거" data-en="±200 px edge-stopping blur → removes stepping on large rocks and walls">±200px 경계 정지 블러 → 큰 바위·벽의 면 계단 제거</span></li>
+        <li><i class="res r-t">16×9</i><span class="pn" data-ko="주 빛 방향" data-en="Key light direction">주 빛 방향</span><span class="pd" data-ko="밝은 면과 어두운 면의 노멀 차이로 장면의 빛 방향과 신뢰도를 추정" data-en="Estimates scene light direction and confidence from bright-vs-dark surface normals">밝은 면과 어두운 면의 노멀 차이로 장면의 빛 방향과 신뢰도를 추정</span></li>
+        <li><i class="res r-q">¼</i><span class="pn" data-ko="풀숲 지도" data-en="Foliage map">풀숲 지도</span><span class="pd" data-ko="세 고리에서 양쪽 깊이가 모두 끊기는 비율 → 풀잎에 음영이 쌓이지 않게" data-en="Ratio of two-sided depth breaks on three rings → keeps shading from stacking on leaves">세 고리에서 양쪽 깊이가 모두 끊기는 비율 → 풀잎에 음영이 쌓이지 않게</span></li>
+        <li><i class="res r-half">½</i><span class="pn" data-ko="AO · 배경 분리" data-en="AO · depth separation">AO · 배경 분리</span><span class="pd" data-ko="오목한 곳 가림(AO) + 가까운 물체 뒤 그림자 + 실루엣·풀숲 마스크. 표본을 짝/홀 프레임에 나눠 계산" data-en="Concave occlusion + shadow behind near objects + silhouette/foliage masks. Samples split across even/odd frames">오목한 곳 가림(AO) + 가까운 물체 뒤 그림자 + 실루엣·풀숲 마스크. 표본을 짝/홀 프레임에 나눠 계산</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="조명 합성" data-en="Lighting composite">조명 합성</span><span class="pd" data-ko="형태 음영 · GGX 스페큘러 · 림 · 투톤 · 배경 분리 · 그늘 속 형태 계조 · 캐릭터 클레이/새틴 · 주변광 받기 · 경계 보존 샤픈" data-en="Form shading · GGX specular · rim · two-tone · depth separation · shadow form · character clay/satin · ambient pickup · edge-preserving sharpen">형태 음영 · GGX 스페큘러 · 림 · 투톤 · 배경 분리 · 그늘 속 형태 계조 · 캐릭터 클레이/새틴 · 주변광 받기 · 경계 보존 샤픈</span></li>
+      </ul>
+      <div class="tags"><span class="tag" data-ko="깊이 인식 업샘플" data-en="Depth-aware upsampling">깊이 인식 업샘플</span><span class="tag" data-ko="2프레임 분할 계산" data-en="Two-frame split">2프레임 분할 계산</span><span class="tag" data-ko="캐릭터/배경 분리 처리" data-en="Character vs background paths">캐릭터/배경 분리 처리</span></div>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 4 -->
+    <div class="stage">
+      <div class="head"><span class="num">04</span><span class="name" data-ko="반사광" data-en="Bounce light">반사광</span><span class="mod">Bounce</span>
+        <div class="what" data-ko="빛 받은 면이 옆 그늘로 색을 튕겨 주는 간접광을 화면 공간에서 근사합니다." data-en="Screen-space approximation of light bouncing from lit surfaces into nearby shade.">빛 받은 면이 옆 그늘로 색을 튕겨 주는 간접광을 화면 공간에서 근사합니다.</div></div>
+      <ul class="passes">
+        <li><i class="res r-half">½</i><span class="pn" data-ko="빛 원천 · 발광체" data-en="Sources · emitters">빛 원천 · 발광체</span><span class="pd" data-ko="빛 받은 평평한 면만 원천으로 (캐릭터 제외), 발광체는 따로 번짐 지도" data-en="Only lit flat surfaces as sources (characters excluded); emitters get their own spill map">빛 받은 평평한 면만 원천으로 (캐릭터 제외), 발광체는 따로 번짐 지도</span></li>
+        <li><i class="res r-q">¼</i><span class="pn" data-ko="반구 수집" data-en="Hemisphere gather">반구 수집</span><span class="pd" data-ko="8방향 × 3거리, 서로 마주 보는 면끼리만, 같은 깊이 층만. 방향을 짝/홀 프레임에 나눠 계산" data-en="8 directions × 3 radii, only facing surfaces on the same depth layer; directions split across frames">8방향 × 3거리, 서로 마주 보는 면끼리만, 같은 깊이 층만. 방향을 짝/홀 프레임에 나눠 계산</span></li>
+        <li><i class="res r-q">¼</i><span class="pn" data-ko="깊이 인식 블러" data-en="Depth-aware blur">깊이 인식 블러</span><span class="pd" data-ko="가로/세로 두 번, 벽 경계 너머는 섞지 않음" data-en="Separable, never mixes across depth edges">가로/세로 두 번, 벽 경계 너머는 섞지 않음</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="반사광 합성" data-en="Bounce composite">반사광 합성</span><span class="pd" data-ko="그늘에만 받는 면 색조로 더함 · 바닥 접촉 그림자 (기둥·소품 밑, 풀숲·벽 제외)" data-en="Added only in shade, tinted by the receiving surface · contact shadows on floors (props/pillars; foliage and walls excluded)">그늘에만 받는 면 색조로 더함 · 바닥 접촉 그림자 (기둥·소품 밑, 풀숲·벽 제외)</span></li>
+      </ul>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 5 -->
+    <div class="stage">
+      <div class="head"><span class="num">05</span><span class="name" data-ko="공기와 빛" data-en="Air light">공기와 빛</span><span class="mod">AirLight</span>
+        <div class="what" data-ko="화면의 광원(등불·창·역광)을 찾아 공기 중 산란과 빛기둥을 만듭니다. 실내·창문·닫힌 공간 같은 장면 패턴을 판정하고, 모든 상태 변화는 몇 초에 걸쳐 서서히 바뀝니다." data-en="Finds light sources (lamps, windows, backlight) and builds in-air scattering and shafts. Classifies scene patterns such as interior, window and enclosed space; every state change ramps over seconds.">화면의 광원(등불·창·역광)을 찾아 공기 중 산란과 빛기둥을 만듭니다. 실내·창문·닫힌 공간 같은 장면 패턴을 판정하고, 모든 상태 변화는 몇 초에 걸쳐 서서히 바뀝니다.</div></div>
+      <ul class="passes">
+        <li><i class="res r-t">16×9</i><span class="pn" data-ko="컷 감지" data-en="Cut detection">컷 감지</span><span class="pd" data-ko="밝기 격자가 화면 대부분에서 바뀌면 상태를 바로 맞춤" data-en="Snaps scene state when most of a luma grid changes">밝기 격자가 화면 대부분에서 바뀌면 상태를 바로 맞춤</span></li>
+        <li><i class="res r-t">64×36</i><span class="pn" data-ko="광원 지도" data-en="Light map">광원 지도</span><span class="pd" data-ko="광원 후보의 색과 무게, 시간 필터로 출렁임 제거 (밉맵)" data-en="Weighted light colour per cell, temporally filtered (mipmapped)">광원 후보의 색과 무게, 시간 필터로 출렁임 제거 (밉맵)</span></li>
+        <li><i class="res r-t">1×1</i><span class="pn" data-ko="광원 위치·장면 상태" data-en="Light & scene state">광원 위치·장면 상태</span><span class="pd" data-ko="무게중심·색·장면 톤·창문 방향·실내 판정. 행 단위 병렬 합 → 상태는 홀드와 램프로 천천히" data-en="Centroid, colour, scene tone, window direction, interior flags; parallel row sums, held and ramped states">무게중심·색·장면 톤·창문 방향·실내 판정. 행 단위 병렬 합 → 상태는 홀드와 램프로 천천히</span></li>
+        <li><i class="res r-e">⅛</i> <span class="pn" data-ko="광원 지도 미리 흐림 · 공기 두께" data-en="Field pre-blur · air depth">광원 지도 미리 흐림 · 공기 두께</span><span class="pd" data-ko="크기별 빛무리 4단계(⅛)와 넓은 평균 깊이(¼)를 미리 계산" data-en="Four halo sizes (⅛) and a wide average depth (¼) precomputed">크기별 빛무리 4단계(⅛)와 넓은 평균 깊이(¼)를 미리 계산</span></li>
+        <li><i class="res r-half">½</i><span class="pn" data-ko="빛기둥" data-en="Light shafts">빛기둥</span><span class="pd" data-ko="광원 쪽 방사형 블러, 짝/홀 프레임 분할" data-en="Radial blur toward the light, split across frames">광원 쪽 방사형 블러, 짝/홀 프레임 분할</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="공기 빛 합성" data-en="Air composite">공기 빛 합성</span><span class="pd" data-ko="산란 · 빛기둥 · 바닥 반사 띠 · 광원 쪽 면 비춤 · 광원 그림자 · 실내 광원 색 지배 (캐릭터는 실루엣으로 남김)" data-en="Scattering · shafts · floor glints · surfaces facing the light · light-source shadows · light colour dominance indoors (characters stay as silhouettes)">산란 · 빛기둥 · 바닥 반사 띠 · 광원 쪽 면 비춤 · 광원 그림자 · 실내 광원 색 지배 (캐릭터는 실루엣으로 남김)</span></li>
+      </ul>
+      <div class="tags"><span class="tag" data-ko="장면 패턴 판정" data-en="Scene pattern detection">장면 패턴 판정</span><span class="tag" data-ko="상태 램프·홀드" data-en="State ramps & hold">상태 램프·홀드</span><span class="tag" data-ko="병렬 리덕션" data-en="Parallel reduction">병렬 리덕션</span></div>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 6 -->
+    <div class="stage">
+      <div class="head"><span class="num">06</span><span class="name" data-ko="바닥 반사 · 샤픈" data-en="Floor reflection · sharpen">바닥 반사 · 샤픈</span><span class="mod">SSR · Sharpen</span></div>
+      <ul class="passes">
+        <li><i class="res r-half">½</i><span class="pn" data-ko="반사 추적" data-en="Reflection trace">반사 추적</span><span class="pd" data-ko="실내의 매끈한 수평 바닥만 화면 공간 광선 추적 + 시간 누적" data-en="Screen-space ray march on smooth level indoor floors only, temporally accumulated">실내의 매끈한 수평 바닥만 화면 공간 광선 추적 + 시간 누적</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="반사 합성" data-en="Reflection composite">반사 합성</span><span class="pd" data-ko="프레넬 · 바닥 무늬가 거칠면 약하게 · 튀는 밝은 점 누르기 (최대 15%)" data-en="Fresnel · weaker on rough patterns · clamps sparkles (max 15%)">프레넬 · 바닥 무늬가 거칠면 약하게 · 튀는 밝은 점 누르기 (최대 15%)</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="샤픈" data-en="Sharpen">샤픈</span><span class="pd" data-ko="깊이 경계를 피하는 루마 샤픈" data-en="Luma sharpen that avoids depth edges">깊이 경계를 피하는 루마 샤픈</span></li>
+      </ul>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 7 -->
+    <div class="stage">
+      <div class="head"><span class="num">07</span><span class="name" data-ko="렌즈" data-en="Lens">렌즈</span><span class="mod">Lens</span>
+        <div class="what" data-ko="카메라 렌즈의 반응을 흉내 냅니다. 장면 노출을 측정해 비네트와 어둠 톤이 사람 눈처럼 몇 초에 걸쳐 적응합니다." data-en="Emulates a camera lens. Scene exposure is metered so the vignette and dark tone adapt over seconds, like an eye.">카메라 렌즈의 반응을 흉내 냅니다. 장면 노출을 측정해 비네트와 어둠 톤이 사람 눈처럼 몇 초에 걸쳐 적응합니다.</div></div>
+      <ul class="passes">
+        <li><i class="res r-half">½</i><span class="pn" data-ko="플레어 원천" data-en="Flare sources">플레어 원천</span><span class="pd" data-ko="밝기 밉맵에서 빛무리가 있는 진짜 광원만 추출" data-en="Extracts real light sources with a halo from a luminance mip chain">밝기 밉맵에서 빛무리가 있는 진짜 광원만 추출</span></li>
+        <li><i class="res r-t">30×17</i><span class="pn" data-ko="광원 고르기" data-en="Source selection">광원 고르기</span><span class="pd" data-ko="칸마다 최고 → 서로 떨어진 상위 3개 (행 병렬 + 이력 가산점으로 깜빡임 방지)" data-en="Best per cell → top 3 spread-out sources (parallel rows + hysteresis)">칸마다 최고 → 서로 떨어진 상위 3개 (행 병렬 + 이력 가산점으로 깜빡임 방지)</span></li>
+        <li><i class="res r-half">½→1/64</i><span class="pn" data-ko="아나모픽 줄" data-en="Anamorphic streak">아나모픽 줄</span><span class="pd" data-ko="가로 피라미드 6단 내려갔다 올라오며 긴 수평 줄" data-en="Six-level horizontal pyramid down and up for long streaks">가로 피라미드 6단 내려갔다 올라오며 긴 수평 줄</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="원경 블러 + 줄 합성" data-en="Far blur + streak">원경 블러 + 줄 합성</span><span class="pd" data-ko="먼 곳만 1px 이하로 아주 옅게 (선형광, 가까운 물체는 섞지 않음)" data-en="Sub-pixel softening of distant areas only (linear light, near objects excluded)">먼 곳만 1px 이하로 아주 옅게 (선형광, 가까운 물체는 섞지 않음)</span></li>
+        <li><i class="res r-t">64×36</i><span class="pn" data-ko="노출 측광" data-en="Exposure metering">노출 측광</span><span class="pd" data-ko="중앙 가중 로그 평균 → 2단 S자 적응 (작은 변화 무시)" data-en="Centre-weighted log average → two-stage S-curve adaptation with deadband">중앙 가중 로그 평균 → 2단 S자 적응 (작은 변화 무시)</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="광학 합성" data-en="Optics composite">광학 합성</span><span class="pd" data-ko="왜곡 · 깊이 기반 종색수차 · 고스트 · 유리 질감 · 노출 반응 비네트 · 어둠 대비와 그늘 색 (어두운 장면일수록)" data-en="Distortion · depth-based longitudinal CA · ghosts · glass · exposure-aware vignette · dark-scene contrast and shadow colour">왜곡 · 깊이 기반 종색수차 · 고스트 · 유리 질감 · 노출 반응 비네트 · 어둠 대비와 그늘 색 (어두운 장면일수록)</span></li>
+      </ul>
+    </div>
+    <div class="arrow">▼</div>
+
+    <!-- 8 -->
+    <div class="stage">
+      <div class="head"><span class="num">08</span><span class="name" data-ko="필름" data-en="Film">필름</span><span class="mod">FilmNoise</span></div>
+      <ul class="passes">
+        <li><i class="res r-t">256×144</i><span class="pn" data-ko="감도 측정" data-en="ISO metering">감도 측정</span><span class="pd" data-ko="장면 밝기로 입자 크기·세기를 정함" data-en="Scene brightness sets grain size and strength">장면 밝기로 입자 크기·세기를 정함</span></li>
+        <li><i class="res r-half">½</i><span class="pn" data-ko="할레이션 원천" data-en="Halation source">할레이션 원천</span><span class="pd" data-ko="밝은 부분 둘레의 붉은 번짐" data-en="Warm glow around highlights">밝은 부분 둘레의 붉은 번짐</span></li>
+        <li class="out"><i class="res r-full">FULL</i><span class="pn" data-ko="필름 그레인 + 프레임 가드" data-en="Film grain + frame guard">필름 그레인 + 프레임 가드</span><span class="pd" data-ko="밝기·거리별 은염 입자 · 로딩/단색 화면이면 원본으로 되돌림" data-en="Silver-halide grain by brightness and distance · restores the original on loading/flat frames">밝기·거리별 은염 입자 · 로딩/단색 화면이면 원본으로 되돌림</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="notes">
+    <h2 data-ko="설계 원칙" data-en="Design principles">설계 원칙</h2>
+    <div class="grid">
+      <div class="card"><h3 data-ko="장면 패턴별 처리" data-en="Per-pattern processing">장면 패턴별 처리</h3><p data-ko="효과를 화면 전체에 세게 거는 대신, 실내·창문·닫힌 공간 같은 장면 패턴을 판정하고 그 패턴 안에서만 처리합니다." data-en="Instead of strengthening effects globally, scene patterns such as interiors, windows and enclosed spaces are detected and handled only inside that pattern.">효과를 화면 전체에 세게 거는 대신, 실내·창문·닫힌 공간 같은 장면 패턴을 판정하고 그 패턴 안에서만 처리합니다.</p></div>
+      <div class="card"><h3 data-ko="튀지 않는 전환" data-en="No popping">튀지 않는 전환</h3><p data-ko="모든 상태는 홀드와 램프를 거쳐 몇 초에 걸쳐 바뀝니다. 컷 전환이 확실할 때만 바로 맞춥니다." data-en="Every state goes through hold and ramp over seconds; it snaps only on a confirmed cut.">모든 상태는 홀드와 램프를 거쳐 몇 초에 걸쳐 바뀝니다. 컷 전환이 확실할 때만 바로 맞춥니다.</p></div>
+      <div class="card"><h3 data-ko="게임 그림체 존중" data-en="Respect the art style">게임 그림체 존중</h3><p data-ko="캐릭터 정면 조명은 게임 의도대로 두고, 공간감은 배경과 빛으로 만듭니다." data-en="Character key lighting stays as the game intends; depth comes from background and light.">캐릭터 정면 조명은 게임 의도대로 두고, 공간감은 배경과 빛으로 만듭니다.</p></div>
+      <div class="card"><h3 data-ko="화질을 지키는 최적화" data-en="Quality-safe optimisation">화질을 지키는 최적화</h3><p data-ko="저주파 값은 낮은 해상도에서 미리 계산하고 깊이 인식 업샘플로 읽습니다. 장면 통계는 작은 격자에서 병렬로 모으고, 무거운 표본은 두 프레임에 나눕니다." data-en="Low-frequency values are precomputed at lower resolution and read with depth-aware upsampling; statistics are gathered in parallel on small grids; heavy sampling is split across two frames.">저주파 값은 낮은 해상도에서 미리 계산하고 깊이 인식 업샘플로 읽습니다. 장면 통계는 작은 격자에서 병렬로 모으고, 무거운 표본은 두 프레임에 나눕니다.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div data-ko="LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다." data-en="LumiShade is an unofficial ReShade shader and is not affiliated with HoYoverse.">LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다.</div>
+    <div>© LumiShade</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  function setLang(l) {
+    document.documentElement.lang = l;
+    var els = document.querySelectorAll('[data-' + l + ']');
+    for (var k = 0; k < els.length; k++) els[k].innerHTML = els[k].getAttribute('data-' + l);
+    var bs = document.querySelectorAll('.lang button');
+    for (var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', bs[j].dataset.lang === l);
+    try { localStorage.setItem('ls_lang', l); } catch (e) {}
+  }
+  var langBtns = document.querySelectorAll('.lang button');
+  for (var j = 0; j < langBtns.length; j++) langBtns[j].addEventListener('click', function () { setLang(this.dataset.lang); });
+  var saved = null;
+  try { saved = localStorage.getItem('ls_lang'); } catch (e) {}
+  setLang(saved || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en'));
+})();
+</script>
+</body>
+</html>
