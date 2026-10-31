@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LumiShade — Download</title>
+<meta name="description" content="Download LumiShade, a ReShade shader pack for Genshin Impact">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0b0d12; --panel: #12151d; --line: #232837; --text: #e8eaf0; --muted: #8b92a5; --accent: #f2c66d; --warn: #ff8f7d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', system-ui, sans-serif; word-break: keep-all; overflow-wrap: break-word; }
+  a { color: inherit; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+  header { position: sticky; top: 0; z-index: 20; background: rgba(11,13,18,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-weight: 800; letter-spacing: .08em; font-size: 20px; text-decoration: none; }
+  .logo span { color: var(--accent); }
+  nav { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-size: 14px; }
+  .btn:hover { border-color: var(--accent); }
+  .lang { color: var(--muted); font-size: 13px; }
+  .lang button { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; padding: 4px 6px; }
+  .lang button.on { color: var(--text); font-weight: 600; }
+
+  h1 { font-size: clamp(26px, 4vw, 38px); margin: 36px 0 20px; font-weight: 800; }
+  h2 { font-size: 22px; margin: 0 0 14px; }
+  section { margin: 0 0 48px; }
+  p, li { color: #c4c9d6; line-height: 1.75; font-size: 15px; }
+  .get { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px 28px; margin-bottom: 48px; }
+  .get .ver { font-size: 26px; font-weight: 800; }
+  .get .ver em { font-style: normal; color: var(--accent); }
+  .get .meta { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .get .tag { display: inline-block; font-size: 12px; font-weight: 700; color: var(--accent); border: 1px solid rgba(242,198,109,.5); border-radius: 999px; padding: 2px 10px; margin-top: 12px; }
+  .dl { display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px; border-radius: 999px; background: var(--accent); color: #1a1406; font-weight: 800; font-size: 16px; text-decoration: none; }
+  .dl:hover { filter: brightness(1.08); }
+  .warn { border: 1px solid rgba(255,143,125,.45); background: rgba(255,143,125,.06); border-radius: 14px; padding: 20px 24px; }
+  .warn h2 { color: var(--warn); }
+  .warn ul { margin: 0; padding-left: 20px; }
+  ol { padding-left: 22px; margin: 0; }
+  ol li { margin-bottom: 6px; }
+  code { background: #1a1f2c; border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 13.5px; color: var(--text); }
+  .lic { border-top: 1px solid var(--line); }
+  .lic div { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .lic b { display: block; margin-bottom: 4px; }
+  .lic span { color: var(--muted); font-size: 14px; line-height: 1.7; }
+  .hash { color: var(--muted); font-size: 12px; word-break: break-all; }
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
+  @media (max-width: 640px) { nav .btn { display: none; } .get { padding: 22px 20px; } .dl { width: 100%; justify-content: center; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="logo" href="./">LUMI<span>SHADE</span></a>
+    <nav>
+      <div class="lang"><button data-lang="ko">한국어</button>|<button data-lang="en">EN</button></div>
+      <a class="btn" href="./#gallery" data-ko="비교 보기" data-en="Compare">비교 보기</a>
+      <a class="btn" href="how-it-works.html" data-ko="작동 원리" data-en="How it works">작동 원리</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <h1 data-ko="다운로드" data-en="Download">다운로드</h1>
+
+  <div class="get">
+    <div>
+      <div class="ver">LumiShade <em>v1.0.0</em></div>
+      <div class="meta" data-ko="2026-10-31 · Windows 10/11 64비트 · ZIP 2.8 MB" data-en="2026-10-31 · Windows 10/11 64-bit · ZIP 2.8 MB">2026-10-31 · Windows 10/11 64비트 · ZIP 2.8 MB</div>
+      <div class="tag" data-ko="포터블 버전 — 설치 없이 압축을 풀고 바로 실행" data-en="Portable — no install, just extract and run">포터블 버전 — 설치 없이 압축을 풀고 바로 실행</div>
+    </div>
+    <a class="dl" href="https://github.com/lumishadeofficial/lumishadeofficial.github.io/releases/download/v1.0.0/LumiShade_v1.0.0.zip" data-ko="LumiShade_v1.0.0.zip 다운로드" data-en="Download LumiShade_v1.0.0.zip">LumiShade_v1.0.0.zip 다운로드</a>
+  </div>
+
+  <section class="warn">
+    <h2 data-ko="사용 전에 꼭 읽어 주세요" data-en="Please read before use">사용 전에 꼭 읽어 주세요</h2>
+    <ul>
+      <li data-ko="LumiShade는 팬이 만든 비공식 셰이더 팩이며 HoYoverse와 관련이 없고, HoYoverse의 승인이나 지원을 받지 않습니다." data-en="LumiShade is an unofficial, fan-made shader pack. It is not affiliated with, endorsed by or supported by HoYoverse.">LumiShade는 팬이 만든 비공식 셰이더 팩이며 HoYoverse와 관련이 없고, HoYoverse의 승인이나 지원을 받지 않습니다.</li>
+      <li data-ko="ReShade는 게임 프로세스에 주입되어 화면을 후처리하는 외부 프로그램입니다. 게임 이용 약관상 외부 프로그램 사용이 허용되지 않을 수 있으며, 계정 제재를 포함한 불이익이 생길 가능성을 배제할 수 없습니다." data-en="ReShade is a third-party program that is injected into the game process to post-process the image. The game's terms of service may not allow third-party programs, and penalties including account action cannot be ruled out.">ReShade는 게임 프로세스에 주입되어 화면을 후처리하는 외부 프로그램입니다. 게임 이용 약관상 외부 프로그램 사용이 허용되지 않을 수 있으며, 계정 제재를 포함한 불이익이 생길 가능성을 배제할 수 없습니다.</li>
+      <li data-ko="사용에 따른 모든 책임(계정 제재, 데이터 손실, 기타 손해)은 사용자 본인에게 있으며, 제작자는 이에 대해 책임지지 않습니다." data-en="You use it entirely at your own risk. The authors accept no responsibility for account action, data loss or any other damage.">사용에 따른 모든 책임(계정 제재, 데이터 손실, 기타 손해)은 사용자 본인에게 있으며, 제작자는 이에 대해 책임지지 않습니다.</li>
+      <li data-ko="LumiShade는 무료로 배포됩니다. 다른 곳에서 유료로 판매되거나 수정된 파일은 공식 배포본이 아닙니다." data-en="LumiShade is free. Paid or modified copies from other sources are not official releases.">LumiShade는 무료로 배포됩니다. 다른 곳에서 유료로 판매되거나 수정된 파일은 공식 배포본이 아닙니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-ko="사용 방법" data-en="How to use">사용 방법</h2>
+    <ol>
+      <li data-ko="받은 ZIP을 원하는 폴더에 압축 해제합니다. 설치 과정은 없습니다." data-en="Extract the ZIP to any folder. There is no installer.">받은 ZIP을 원하는 폴더에 압축 해제합니다. 설치 과정은 없습니다.</li>
+      <li data-ko="원신이 실행 중이면 종료합니다." data-en="Close Genshin Impact if it is running.">원신이 실행 중이면 종료합니다.</li>
+      <li data-ko="<code>LumiShadeLauncher.exe</code>를 실행하고 <b>Launch Genshin Impact + LumiShade</b>를 누릅니다. 게임을 자동으로 찾지 못하면 <b>Browse...</b>로 <code>GenshinImpact.exe</code>를 선택하세요." data-en="Run <code>LumiShadeLauncher.exe</code> and press <b>Launch Genshin Impact + LumiShade</b>. If the game is not found automatically, use <b>Browse...</b> to select <code>GenshinImpact.exe</code>."><code>LumiShadeLauncher.exe</code>를 실행하고 <b>Launch Genshin Impact + LumiShade</b>를 누릅니다. 게임을 자동으로 찾지 못하면 <b>Browse...</b>로 <code>GenshinImpact.exe</code>를 선택하세요.</li>
+      <li data-ko="게임 안에서 <code>Home</code> 키로 ReShade 오버레이를 열고 닫을 수 있습니다." data-en="In game, press <code>Home</code> to open or close the ReShade overlay.">게임 안에서 <code>Home</code> 키로 ReShade 오버레이를 열고 닫을 수 있습니다.</li>
+    </ol>
+    <p data-ko="게임 폴더에는 LumiShade 폴더를 가리키는 <code>ReShade.ini</code> 하나만 복사됩니다. 사용을 멈추려면 게임을 평소처럼 실행하면 되고, 원하면 게임 폴더의 <code>ReShade.ini</code>를 지우면 됩니다." data-en="Only one file, <code>ReShade.ini</code>, is copied into the game folder; it points back to the LumiShade folder. To stop using LumiShade, launch the game normally, and delete <code>ReShade.ini</code> from the game folder if you like.">게임 폴더에는 LumiShade 폴더를 가리키는 <code>ReShade.ini</code> 하나만 복사됩니다. 사용을 멈추려면 게임을 평소처럼 실행하면 되고, 원하면 게임 폴더의 <code>ReShade.ini</code>를 지우면 됩니다.</p>
+  </section>
+
+  <section>
+    <h2 data-ko="요구 사항" data-en="Requirements">요구 사항</h2>
+    <ul>
+      <li data-ko="Windows 10 / 11 (64비트), .NET Framework 4.8 (Windows에 기본 포함)" data-en="Windows 10 / 11 (64-bit), .NET Framework 4.8 (built into Windows)">Windows 10 / 11 (64비트), .NET Framework 4.8 (Windows에 기본 포함)</li>
+      <li data-ko="DirectX 11 (원신 기본 설정)" data-en="DirectX 11 (Genshin Impact default)">DirectX 11 (원신 기본 설정)</li>
+      <li data-ko="성능이 넉넉한 그래픽 카드 — 4K에서는 부하가 큽니다." data-en="A capable graphics card — it is heavy at 4K.">성능이 넉넉한 그래픽 카드 — 4K에서는 부하가 큽니다.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2 data-ko="저작권 · 라이선스" data-en="Credits &amp; licences">저작권 · 라이선스</h2>
+    <div class="lic">
+      <div><b>ReShade</b><span data-ko="© crosire (Patrick Mours) — <a href=&quot;https://reshade.me&quot;>reshade.me</a>. 패키지에 들어 있는 <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code>, <code>ReShadeUI.fxh</code>는 ReShade의 일부이며, BSD 3-Clause 라이선스에 따라 수정 없이 함께 배포합니다. 라이선스 전문은 <code>ReShade_LICENSE.txt</code>에 있습니다." data-en="© crosire (Patrick Mours) — <a href=&quot;https://reshade.me&quot;>reshade.me</a>. <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code> and <code>ReShadeUI.fxh</code> are part of ReShade and are redistributed unmodified under its BSD 3-Clause licence. The full text is in <code>ReShade_LICENSE.txt</code>.">© crosire (Patrick Mours) — <a href="https://reshade.me">reshade.me</a>. 패키지에 들어 있는 <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code>, <code>ReShadeUI.fxh</code>는 ReShade의 일부이며, BSD 3-Clause 라이선스에 따라 수정 없이 함께 배포합니다. 라이선스 전문은 <code>ReShade_LICENSE.txt</code>에 있습니다.</span></div>
+      <div><b>ReShade Effect Shader Toggler (REST)</b><span data-ko="UI보다 먼저 효과를 적용하기 위해 쓰는 ReShade 애드온입니다. 라이선스는 <code>REST_LICENSE.txt</code>에 있습니다." data-en="A ReShade add-on used to apply the effect before the game UI. Its licence is in <code>REST_LICENSE.txt</code>.">UI보다 먼저 효과를 적용하기 위해 쓰는 ReShade 애드온입니다. 라이선스는 <code>REST_LICENSE.txt</code>에 있습니다.</span></div>
+      <div><b>Genshin Impact</b><span data-ko="© HoYoverse. 게임과 관련된 모든 콘텐츠의 권리는 HoYoverse에 있습니다." data-en="© HoYoverse. All game content belongs to HoYoverse.">© HoYoverse. 게임과 관련된 모든 콘텐츠의 권리는 HoYoverse에 있습니다.</span></div>
+    </div>
+    <p class="hash">SHA-256 (LumiShade_v1.0.0.zip): 9f808f73a31581b390b941fd4bf01200e9ac9a9f82e14ae636a94d55e1c0fb5b</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div data-ko="LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다." data-en="LumiShade is an unofficial ReShade shader and is not affiliated with HoYoverse.">LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다.</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  function setLang(l) {
+    document.documentElement.lang = l;
+    var els = document.querySelectorAll('[data-' + l + ']');
+    for (var k = 0; k < els.length; k++) els[k].innerHTML = els[k].getAttribute('data-' + l);
+    var bs = document.querySelectorAll('.lang button');
+    for (var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', bs[j].dataset.lang === l);
+    try { localStorage.setItem('ls_lang', l); } catch (e) {}
+  }
+  var lb = document.querySelectorAll('.lang button');
+  for (var j = 0; j < lb.length; j++) lb[j].addEventListener('click', function () { setLang(this.dataset.lang); });
+  var saved = null; try { saved = localStorage.getItem('ls_lang'); } catch (e) {}
+  setLang(saved || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en'));
+})();
+</script>
+</body>
+</html>
