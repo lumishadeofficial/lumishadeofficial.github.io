@@ -167,6 +167,7 @@
 <script>
 (function () {
   var N = 35;
+  var V = '?v=' + '20261031c';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -180,15 +181,15 @@
     var t = document.createElement('button');
     t.className = 'thumb';
     t.dataset.i = i;
-    t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg" alt="' + i + '"><span>' + i + '</span>';
+    t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg' + V + '" alt="' + i + '"><span>' + i + '</span>';
     t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
     thumbs.appendChild(t);
   }
 
   function preload(i) {
     i = (i + N - 1) % N + 1;
-    new Image().src = 'images/' + pad(i) + '_after.jpg';
-    new Image().src = 'images/' + pad(i) + '_before.jpg';
+    new Image().src = 'images/' + pad(i) + '_after.jpg' + V;
+    new Image().src = 'images/' + pad(i) + '_before.jpg' + V;
   }
 
   // 두 장이 모두 준비되면 한 번에 바꿈 (한쪽만 먼저 바뀌어 다른 장면끼리 비교되는 순간이 없게)
@@ -204,8 +205,8 @@
       cmp.classList.remove('busy');
     };
     a.onload = b.onload = a.onerror = b.onerror = ready;
-    a.src = 'images/' + pad(cur) + '_after.jpg';
-    b.src = 'images/' + pad(cur) + '_before.jpg';
+    a.src = 'images/' + pad(cur) + '_after.jpg' + V;
+    b.src = 'images/' + pad(cur) + '_before.jpg' + V;
     count.textContent = cur + ' / ' + N;
     var all = thumbs.children;
     for (var k = 0; k < all.length; k++) all[k].classList.toggle('on', +all[k].dataset.i === cur);
