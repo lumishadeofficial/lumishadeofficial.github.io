@@ -1,12 +1,235 @@
-https://github.com/lumishadeofficial/lumishade/tree/main<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My GitHub Page</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LumiShade</title>
+<meta name="description" content="LumiShade — ReShade shader pack for Genshin Impact. Light, depth and atmosphere that react to every scene.">
+<meta property="og:title" content="LumiShade">
+<meta property="og:description" content="ReShade shader pack for Genshin Impact">
+<meta property="og:image" content="images/01_after.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0d12;
+    --panel: #12151d;
+    --line: #232837;
+    --text: #e8eaf0;
+    --muted: #8b92a5;
+    --accent: #f2c66d;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', system-ui, sans-serif; }
+  a { color: inherit; }
+  .wrap { max-width: 1400px; margin: 0 auto; padding: 0 16px; }
+
+  header { position: sticky; top: 0; z-index: 20; background: rgba(11,13,18,.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+  .logo { font-weight: 800; letter-spacing: .08em; font-size: 20px; }
+  .logo span { color: var(--accent); }
+  nav { display: flex; gap: 8px; align-items: center; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-size: 14px; cursor: pointer; font-family: inherit; }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: #1a1406; border-color: var(--accent); font-weight: 600; }
+  .lang { color: var(--muted); font-size: 13px; }
+  .lang button { background: none; border: none; color: var(--muted); cursor: pointer; font: inherit; padding: 4px 6px; }
+  .lang button.on { color: var(--text); font-weight: 600; }
+
+  .hero { padding: 56px 0 24px; text-align: center; }
+  .hero h1 { font-size: clamp(32px, 6vw, 64px); margin: 0 0 12px; font-weight: 800; letter-spacing: .02em; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { color: var(--muted); font-size: clamp(15px, 2vw, 18px); max-width: 720px; margin: 0 auto; line-height: 1.7; }
+
+  /* 비교 슬라이더 */
+  .viewer { margin: 28px 0 12px; }
+  .cmp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; background: #000; user-select: none; touch-action: pan-y; cursor: ew-resize; box-shadow: 0 20px 60px rgba(0,0,0,.5); outline: none; }
+  .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; }
+  .cmp .before { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+  .cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; background: #fff; transform: translateX(-1px); box-shadow: 0 0 12px rgba(0,0,0,.6); }
+  .cmp .knob { position: absolute; top: 50%; left: 50%; width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.95); transform: translate(-50%, -50%); display: grid; place-items: center; box-shadow: 0 4px 16px rgba(0,0,0,.5); color: #111; font-size: 18px; font-weight: 800; }
+  .cmp .tag { position: absolute; top: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(0,0,0,.55); font-size: 13px; letter-spacing: .06em; font-weight: 600; }
+  .cmp .tag.l { left: 14px; }
+  .cmp .tag.r { right: 14px; color: var(--accent); }
+  .cmp .loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 14px; background: rgba(0,0,0,.35); opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .cmp.busy .loading { opacity: 1; }
+
+  .controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; }
+  .controls .count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
+  .controls .hint { color: var(--muted); font-size: 13px; text-align: center; flex: 1; }
+
+  .thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin: 22px 0 64px; }
+  .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
+  .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .65; transition: opacity .15s; }
+  .thumb:hover img, .thumb.on img { opacity: 1; }
+  .thumb.on { border-color: var(--accent); }
+  .thumb span { position: absolute; left: 6px; bottom: 4px; font-size: 11px; color: #fff; text-shadow: 0 1px 3px #000; }
+
+  section.feat { padding: 8px 0 64px; }
+  section.feat h2 { font-size: 26px; margin: 0 0 20px; text-align: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
+  .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; line-height: 1.8; }
+
+  @media (max-width: 640px) {
+    .controls .hint { display: none; }
+    nav .btn:not(.primary) { display: none; }
+    .cmp .knob { width: 38px; height: 38px; }
+    .cmp .tag { font-size: 11px; top: 8px; }
+  }
+</style>
 </head>
 <body>
-    <h1>Welcome to My GitHub Page!</h1>
-    <p>This is my first GitHub Pages website.</p>
+<header>
+  <div class="wrap">
+    <div class="logo">LUMI<span>SHADE</span></div>
+    <nav>
+      <div class="lang"><button data-lang="ko">한국어</button>|<button data-lang="en">EN</button></div>
+      <a class="btn" href="#gallery" data-ko="비교 보기" data-en="Compare">비교 보기</a>
+      <a class="btn primary" href="https://github.com/lumishadeofficial/lumishade" target="_blank" rel="noopener" data-ko="다운로드" data-en="Download">다운로드</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Lumi<em>Shade</em></h1>
+    <p data-ko="LumiShade는 원신을 위한 ReShade 셰이더 팩입니다. 장면마다 빛과 깊이, 공기를 읽어 게임 본연의 그림체는 지키면서 입체감과 분위기를 더합니다."
+       data-en="LumiShade is a ReShade shader pack for Genshin Impact. It reads the light, depth and air of every scene, adding volume and mood while keeping the game's own art style.">LumiShade는 원신을 위한 ReShade 셰이더 팩입니다. 장면마다 빛과 깊이, 공기를 읽어 게임 본연의 그림체는 지키면서 입체감과 분위기를 더합니다.</p>
+  </section>
+
+  <section id="gallery" class="viewer">
+    <div class="cmp" id="cmp" tabindex="0" aria-label="Before / After">
+      <img class="after" id="imgAfter" alt="LumiShade">
+      <img class="before" id="imgBefore" alt="Original">
+      <div class="bar"><div class="knob">⇆</div></div>
+      <div class="tag l" data-ko="원본" data-en="Original">원본</div>
+      <div class="tag r">LumiShade</div>
+      <div class="loading" data-ko="불러오는 중…" data-en="Loading…">불러오는 중…</div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="prev" aria-label="previous">←</button>
+      <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
+      <span class="count" id="count">1 / 28</span>
+      <button class="btn" id="next" aria-label="next">→</button>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+  </section>
+
+  <section class="feat">
+    <h2 data-ko="무엇이 달라지나" data-en="What it does">무엇이 달라지나</h2>
+    <div class="grid">
+      <div class="card"><h3 data-ko="형태와 깊이" data-en="Form &amp; depth">형태와 깊이</h3>
+        <p data-ko="깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다." data-en="Reads surface direction and occlusion from the depth buffer, adding soft form shading and contact shadows to flat toon surfaces.">깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다.</p></div>
+      <div class="card"><h3 data-ko="반사광" data-en="Bounce light">반사광</h3>
+        <p data-ko="햇빛 받은 면이 옆 그늘을 은은하게 채워, 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다." data-en="Sunlit surfaces gently fill nearby shade, so shadows carry the colour of their surroundings instead of one flat tone.">햇빛 받은 면이 옆 그늘을 은은하게 채워, 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다.</p></div>
+      <div class="card"><h3 data-ko="공기와 빛" data-en="Air &amp; light">공기와 빛</h3>
+        <p data-ko="등불, 창, 역광을 찾아 공기 중 산란과 빛기둥을 만들고, 광원 색이 둘레 면에 스며들게 합니다." data-en="Finds lamps, windows and backlight to create in-air scattering and light shafts, letting the light's colour fall on nearby surfaces.">등불, 창, 역광을 찾아 공기 중 산란과 빛기둥을 만들고, 광원 색이 둘레 면에 스며들게 합니다.</p></div>
+      <div class="card"><h3 data-ko="어둠의 표현" data-en="Darkness">어둠의 표현</h3>
+        <p data-ko="장면 노출을 따라 어두운 곳일수록 빛과 그늘을 더 분리해, 밤과 실내가 '어둡게 한 낮'이 아닌 빛이 있는 공간으로 보입니다." data-en="Following scene exposure, dark scenes separate light from shade, so nights and interiors read as lit spaces rather than darkened daylight.">장면 노출을 따라 어두운 곳일수록 빛과 그늘을 더 분리해, 밤과 실내가 '어둡게 한 낮'이 아닌 빛이 있는 공간으로 보입니다.</p></div>
+      <div class="card"><h3 data-ko="렌즈" data-en="Lens">렌즈</h3>
+        <p data-ko="노출에 반응하는 비네트, 광원에서 뻗는 아나모픽 플레어, 미세한 색수차로 카메라로 찍은 듯한 화면을 만듭니다." data-en="Exposure-aware vignette, anamorphic streaks from light sources and subtle chromatic aberration for a filmed look.">노출에 반응하는 비네트, 광원에서 뻗는 아나모픽 플레어, 미세한 색수차로 카메라로 찍은 듯한 화면을 만듭니다.</p></div>
+      <div class="card"><h3 data-ko="안정성" data-en="Stability">안정성</h3>
+        <p data-ko="컷 전환, 메뉴, 깊이가 비는 프레임을 감지해 효과가 깜빡이지 않고, 모든 장면 전환이 부드럽게 이어집니다." data-en="Detects cuts, menus and empty depth frames so effects never flicker, and every scene change blends smoothly.">컷 전환, 메뉴, 깊이가 비는 프레임을 감지해 효과가 깜빡이지 않고, 모든 장면 전환이 부드럽게 이어집니다.</p></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div data-ko="LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다." data-en="LumiShade is an unofficial ReShade shader and is not affiliated with HoYoverse.">LumiShade는 ReShade용 비공식 셰이더이며 HoYoverse와 관련이 없습니다.</div>
+    <div>© LumiShade · <a href="https://github.com/lumishadeofficial/lumishade" target="_blank" rel="noopener">GitHub</a></div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var N = 28;
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  var cmp = document.getElementById('cmp');
+  var imgA = document.getElementById('imgAfter');
+  var imgB = document.getElementById('imgBefore');
+  var count = document.getElementById('count');
+  var thumbs = document.getElementById('thumbs');
+  var cur = 1;
+
+  // 썸네일
+  for (var i = 1; i <= N; i++) {
+    var t = document.createElement('button');
+    t.className = 'thumb';
+    t.dataset.i = i;
+    t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg" alt="' + i + '"><span>' + i + '</span>';
+    t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+    thumbs.appendChild(t);
+  }
+
+  function preload(i) {
+    i = (i + N - 1) % N + 1;
+    new Image().src = 'images/' + pad(i) + '_after.jpg';
+    new Image().src = 'images/' + pad(i) + '_before.jpg';
+  }
+
+  // 두 장이 모두 준비되면 한 번에 바꿈 (한쪽만 먼저 바뀌어 다른 장면끼리 비교되는 순간이 없게)
+  var token = 0;
+  function show(i) {
+    cur = (i + N - 1) % N + 1;
+    var tk = ++token;
+    var a = new Image(), b = new Image(), done = 0;
+    cmp.classList.add('busy');
+    var ready = function () {
+      if (++done < 2 || tk !== token) return;
+      imgA.src = a.src; imgB.src = b.src;
+      cmp.classList.remove('busy');
+    };
+    a.onload = b.onload = a.onerror = b.onerror = ready;
+    a.src = 'images/' + pad(cur) + '_after.jpg';
+    b.src = 'images/' + pad(cur) + '_before.jpg';
+    count.textContent = cur + ' / ' + N;
+    var all = thumbs.children;
+    for (var k = 0; k < all.length; k++) all[k].classList.toggle('on', +all[k].dataset.i === cur);
+    preload(cur + 1); preload(cur - 1);
+  }
+
+  // 슬라이더 (마우스/터치 공통)
+  var dragging = false;
+  function setPos(clientX) {
+    var r = cmp.getBoundingClientRect();
+    var p = Math.min(Math.max((clientX - r.left) / r.width, 0), 1) * 100;
+    cmp.style.setProperty('--pos', p + '%');
+  }
+  cmp.addEventListener('pointerdown', function (e) { dragging = true; cmp.setPointerCapture(e.pointerId); setPos(e.clientX); });
+  cmp.addEventListener('pointermove', function (e) { if (dragging) setPos(e.clientX); });
+  cmp.addEventListener('pointerup', function () { dragging = false; });
+  cmp.addEventListener('pointercancel', function () { dragging = false; });
+
+  document.getElementById('prev').addEventListener('click', function () { show(cur - 1); });
+  document.getElementById('next').addEventListener('click', function () { show(cur + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') show(cur - 1);
+    else if (e.key === 'ArrowRight') show(cur + 1);
+  });
+
+  // 언어 (한국어 / English)
+  function setLang(l) {
+    document.documentElement.lang = l;
+    var els = document.querySelectorAll('[data-' + l + ']');
+    for (var k = 0; k < els.length; k++) els[k].innerHTML = els[k].getAttribute('data-' + l);
+    var bs = document.querySelectorAll('.lang button');
+    for (var j = 0; j < bs.length; j++) bs[j].classList.toggle('on', bs[j].dataset.lang === l);
+    try { localStorage.setItem('ls_lang', l); } catch (e) {}
+  }
+  var langBtns = document.querySelectorAll('.lang button');
+  for (var j = 0; j < langBtns.length; j++) langBtns[j].addEventListener('click', function () { setLang(this.dataset.lang); });
+  var saved = null;
+  try { saved = localStorage.getItem('ls_lang'); } catch (e) {}
+  setLang(saved || ((navigator.language || '').indexOf('ko') === 0 ? 'ko' : 'en'));
+
+  show(1);
+})();
+</script>
 </body>
 </html>
