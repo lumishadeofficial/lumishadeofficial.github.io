@@ -40,16 +40,19 @@
 
   .hero { position: relative; margin-top: 24px; min-height: clamp(380px, 40vw, 560px); border-radius: 18px; overflow: hidden; display: flex; align-items: center;
           background: #0f121a; border: 1px solid var(--line); }
-  .hero .art { position: absolute; right: 0; top: 0; height: 100%; aspect-ratio: 984 / 1400; max-width: 62%; }
-  .hero .art img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
-  .hero .art::after { content: ""; position: absolute; inset: 0 0 0 -2px; background: linear-gradient(to right, #0f121a 0%, #0f121a 5%, rgba(15,18,26,.8) 16%, rgba(15,18,26,0) 50%), linear-gradient(to top, #0f121a 0%, rgba(15,18,26,0) 22%); }
+  /* 일러스트 왼쪽의 흰 배경을 왼쪽으로 넓게 이어 붙이고(넓힌 영역 = 그라데이션), 천천히 어두운 배경으로 */
+  .hero .art { position: absolute; right: 0; top: 0; height: 100%; aspect-ratio: 1633 / 1400; max-width: 80%;
+               background: linear-gradient(to right, #0f121a 0%, #1d212b 8%, #3c414d 16%, #6f7480 24%, #a9adb5 31%, #dcdbda 37%, #f8f6f5 41.2%); }
+  .hero .art img { position: absolute; right: 0; top: 0; height: 100%; width: 58.8%; object-fit: cover; object-position: center top; display: block; }
+  .hero .art::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, #0f121a 0%, rgba(15,18,26,0) 24%); }
   .hero .txt { position: relative; z-index: 1; padding: 40px clamp(20px, 5vw, 64px); max-width: 640px; }
   .hero h1 { font-size: clamp(36px, 6vw, 72px); margin: 0 0 14px; font-weight: 800; letter-spacing: .02em; }
   .hero h1 em { font-style: normal; color: var(--accent); }
   .hero p { color: #c4c9d6; font-size: clamp(15px, 1.7vw, 18px); margin: 0; line-height: 1.75; text-shadow: 0 1px 12px rgba(0,0,0,.6); }
   .hero .credit { position: absolute; right: 12px; bottom: 8px; z-index: 1; font-size: 11px; color: rgba(232,234,240,.55); }
   @media (max-width: 720px) {
-    .hero .art { max-width: none; width: 100%; aspect-ratio: auto; opacity: .35; }
+    .hero .art { max-width: none; width: 100%; aspect-ratio: auto; opacity: .35; background: none; }
+    .hero .art img { width: 100%; }
   }
 
   /* 비교 슬라이더 */
@@ -108,7 +111,7 @@
 
 <main class="wrap">
   <section class="hero">
-    <div class="art"><img src="images/hero_lumine.jpg?v=2" alt="Lumine"></div>
+    <div class="art"><img src="images/hero_lumine.jpg?v=3" alt="Lumine"></div>
     <div class="txt">
       <h1>Lumi<em>Shade</em></h1>
     <p data-ko="LumiShade는 원신을 위한 ReShade 셰이더 팩입니다.<br>장면마다 빛과 깊이, 공기를 읽어 게임 본연의 그림체는 지키면서 입체감과 분위기를 더합니다."
@@ -136,7 +139,7 @@
   </section>
 
   <section class="feat">
-    <h2 data-ko="무엇이 달라지나" data-en="What it does">무엇이 달라지나</h2>
+    <h2 data-ko="시각 효과" data-en="Visual effects">시각 효과</h2>
     <div class="grid">
       <div class="card"><h3 data-ko="형태와 깊이" data-en="Form &amp; depth">형태와 깊이</h3>
         <p data-ko="깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다." data-en="Reads surface direction and occlusion from the depth buffer, adding soft form shading and contact shadows to flat toon surfaces.">깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다.</p></div>
