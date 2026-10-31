@@ -71,8 +71,8 @@
   .controls .count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
   .controls .hint { color: var(--muted); font-size: 13px; text-align: center; flex: 1; }
 
-  .thumbs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin: 22px 0 64px; }
-  .thumb { position: relative; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
+  .thumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 22px 0 64px; }
+  .thumb { position: relative; width: calc((100% - 60px) / 7); aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
   .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .65; transition: opacity .15s; }
   .thumb:hover img, .thumb.on img { opacity: 1; }
   .thumb.on { border-color: var(--accent); }
@@ -81,8 +81,8 @@
   section.feat { padding: 8px 0 64px; }
   section.feat h2 { font-size: 26px; margin: 0 0 20px; text-align: center; }
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); justify-content: center; gap: 20px; }
-  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumbs { grid-template-columns: repeat(4, 1fr); } }
-  @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); } .thumbs { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 30px) / 4); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); } .thumb { width: calc((100% - 10px) / 2); } }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
   .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
@@ -133,7 +133,7 @@
     <div class="controls">
       <button class="btn" id="prev" aria-label="previous">←</button>
       <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
-      <span class="count" id="count">1 / 28</span>
+      <span class="count" id="count">1 / 29</span>
       <button class="btn" id="next" aria-label="next">→</button>
     </div>
     <div class="thumbs" id="thumbs"></div>
@@ -167,7 +167,7 @@
 
 <script>
 (function () {
-  var N = 28;
+  var N = 29;
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
