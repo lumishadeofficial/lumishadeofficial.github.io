@@ -55,7 +55,7 @@
   .e-guard { stroke: #ff8f7d; stroke-dasharray: 5 5; opacity: .8; }
   .col { font-size: 11px; fill: var(--muted); letter-spacing: .12em; font-weight: 600; }
   .lead { color: var(--muted); line-height: 1.75; max-width: 860px; margin: 0 0 18px; }
-  .steps { max-width: 1040px; margin: 0 auto 64px; }
+  .steps { margin: 0 0 64px; }
   .steps h2 { font-size: 24px; margin: 0 0 16px; }
   .step { display: flex; gap: 16px; padding: 18px 0; border-top: 1px solid var(--line); }
   .sn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #1a1406; background: var(--accent); }
@@ -87,7 +87,7 @@
     <span><i style="border-color:var(--chain);border-top-width:3px"></i><em data-ko="합성 순서" data-en="composite order">합성 순서</em></span>
     <span><i style="border-color:#ff8f7d;border-top-style:dashed"></i><em data-ko="안정도 가드 (컷·메뉴·빈 깊이)" data-en="stability guard (cuts, menus, empty depth)">안정도 가드 (컷·메뉴·빈 깊이)</em></span>
   </div>
-  <div class="graph"><svg id="g" viewBox="0 0 1190 860" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LumiShade pipeline"></svg></div>
+  <div class="graph"><svg id="g" viewBox="0 0 1260 860" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LumiShade pipeline"></svg></div>
   <section class="steps">
     <h2 data-ko="적용 순서" data-en="In order">적용 순서</h2>
     <div class="step"><div class="sn">0</div><div class="sb">
@@ -125,7 +125,7 @@
     </div></div>
     <div class="step"><div class="sn">6</div><div class="sb">
       <h3 data-ko="원경 블러 · 플레어" data-en="Far blur · flare">원경 블러 · 플레어</h3>
-      <p data-ko="먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 가로 피라미드로 긴 아나모픽 줄을 뽑습니다." data-en="Only distant areas are softened by under a pixel for depth, never mixing near objects. Of the bright sources, only the top three with a halo get long anamorphic streaks via a horizontal pyramid.">먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 가로 피라미드로 긴 아나모픽 줄을 뽑습니다.</p>
+      <p data-ko="먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 아나모픽 렌즈 플레어를 만듭니다." data-en="Only distant areas are softened by under a pixel for depth, never mixing near objects. Of the bright sources, only the top three with a halo get an anamorphic lens flare.">먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 아나모픽 렌즈 플레어를 만듭니다.</p>
       <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="원경이 살짝 물러나고, 등불·해에서 영화 같은 수평 빛줄기가 뻗습니다." data-en="Distance recedes a little and lamps or the sun throw cinematic horizontal streaks.">원경이 살짝 물러나고, 등불·해에서 영화 같은 수평 빛줄기가 뻗습니다.</em></p>
     </div></div>
     <div class="step"><div class="sn">7</div><div class="sb">
@@ -150,8 +150,8 @@
 <script>
 (function () {
   // 노드: id, 열 x, y, 폭, 종류, 한국어, 영어, 해상도
-  var CX = { a: 20, b: 230, c: 560, e: 920 };
-  var W  = { a: 150, b: 200, c: 250, e: 250 };
+  var CX = { a: 20, b: 230, c: 560, e: 940 };
+  var W  = { a: 150, b: 200, c: 290, e: 300 };
   var H = 48;
   var N = [
     // 입력
@@ -172,7 +172,7 @@
     ['c4',  'c', 280, 'chain', '4 · 공기 빛 (산란 · 빛기둥)', '4 · Air light (scatter · shafts)', 'FULL'],
     ['c5',  'c', 360, 'chain', '5 · 바닥 반사', '5 · Floor reflection', 'FULL'],
     ['c6',  'c', 440, 'chain', '5 · 샤픈', '5 · Sharpen', 'FULL'],
-    ['c7',  'c', 520, 'chain', '6 · 원경 블러 · 플레어 줄', '6 · Far blur · flare streak', 'FULL'],
+    ['c7',  'c', 520, 'chain', '6 · 원경 블러 · 아나모픽 렌즈 플레어', '6 · Far blur · anamorphic lens flare', 'FULL'],
     ['c8',  'c', 600, 'chain', '7 · 렌즈 · 비네트 · 어둠 톤', '7 · Lens · vignette · dark tone', 'FULL'],
     ['c9',  'c', 680, 'chain', '8 · 필름 그레인', '8 · Film grain', 'FULL'],
     ['out', 'c', 790, 'out',   '최종 화면', 'Final image', ''],
@@ -182,7 +182,7 @@
     ['lmap',  'e', 240, 'color', '광원 지도 · 장면 상태', 'Light map · scene state', '64×36 · 1×1'],
     ['rays',  'e', 320, 'color', '빛무리 · 빛기둥', 'Halo field · shafts', '⅛ · ½'],
     ['ssr',   'e', 380, 'color', '반사 추적', 'Reflection trace', '½'],
-    ['fsrc',  'e', 480, 'color', '플레어 광원 선택 → 줄', 'Flare pick → streak', '½ · 30×17'],
+    ['fsrc',  'e', 480, 'color', '플레어 광원 선택 → 아나모픽 렌즈 플레어', 'Flare pick → anamorphic lens flare', '½ · 30×17'],
     ['exp',   'e', 560, 'color', '노출 측광', 'Exposure metering', '64×36'],
     ['iso',   'e', 650, 'color', '감도 · 할레이션', 'ISO · halation', '¼ · ½']
   ];
