@@ -133,7 +133,7 @@
     <div class="controls">
       <button class="btn" id="prev" aria-label="previous">←</button>
       <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
-      <span class="count" id="count">1 / 36</span>
+      <span class="count" id="count">1 / 37</span>
       <button class="btn" id="next" aria-label="next">→</button>
     </div>
     <div class="thumbs" id="thumbs"></div>
@@ -166,8 +166,8 @@
 
 <script>
 (function () {
-  var N = 36;
-  var V = '?v=' + '20261101b';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var N = 37;
+  var V = '?v=' + '20261101c';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
