@@ -66,6 +66,25 @@
   .sb .see span { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--accent); border: 1px solid rgba(242,198,109,.5); border-radius: 999px; padding: 1px 8px; margin-right: 6px; }
   .sb .see em { font-style: normal; }
   footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
+  .see-fx { margin: 0 0 56px; }
+  .see-fx h2, h2.h2 { font-size: 24px; margin: 0 0 12px; }
+  .cmp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; background: #000; user-select: none; touch-action: pan-y; cursor: ew-resize; box-shadow: 0 20px 60px rgba(0,0,0,.5); outline: none; }
+  .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; }
+  .cmp .before { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
+  .cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; background: #fff; transform: translateX(-1px); box-shadow: 0 0 12px rgba(0,0,0,.6); }
+  .cmp .knob { position: absolute; top: 50%; left: 50%; width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.95); transform: translate(-50%, -50%); display: grid; place-items: center; box-shadow: 0 4px 16px rgba(0,0,0,.5); color: #111; font-size: 18px; font-weight: 800; }
+  .cmp .tag { position: absolute; top: 14px; padding: 5px 12px; border-radius: 999px; background: rgba(0,0,0,.55); font-size: 13px; letter-spacing: .04em; font-weight: 600; }
+  .cmp .tag.l { left: 14px; }
+  .cmp .tag.r { right: 14px; color: var(--accent); }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 0; }
+  .tabs .btn { cursor: pointer; font: inherit; font-size: 14px; }
+  .tabs .btn.on { border-color: var(--accent); color: var(--accent); }
+  .note { color: var(--muted); font-size: 13.5px; line-height: 1.75; max-width: 860px; margin: 14px 0 0; }
+  .figs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .figs figure { margin: 0; }
+  .figs img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px; border: 1px solid var(--line); background: #000; }
+  .figs figcaption { color: var(--muted); font-size: 13px; margin-top: 6px; line-height: 1.5; }
+  @media (max-width: 800px) { .figs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>
 </head>
 <body>
@@ -82,7 +101,39 @@
 
 <main class="wrap">
   <h1 data-ko="작동 원리" data-en="How it works">작동 원리</h1>
-  <p class="lead" data-ko="LumiShade는 게임 화면 프레임과 깊이 버퍼를 읽어 장면의 형태를 추출하고, 장면마다 필요한 변화량을 계산해 단계별로 합성합니다." data-en="LumiShade reads the game frame and the depth buffer to extract the shape of the scene, then works out the change each scene needs and composites it step by step.">LumiShade는 게임 화면 프레임과 깊이 버퍼를 읽어 장면의 형태를 추출하고, 장면마다 필요한 변화량을 계산해 단계별로 합성합니다.</p>
+  <p class="lead" data-ko="LumiShade는 게임 화면 프레임과 깊이 버퍼를 읽어 장면의 형태와 빛을 추출하고, 장면마다 필요한 변화량을 계산해 단계별로 합성합니다. 게임의 그림 자체는 바꾸지 않고, 화면에 이미 있는 정보만으로 SSAO, SSGI, SSR 같은 화면 공간 조명 효과와 렌즈·필름 표현을 더합니다." data-en="LumiShade reads the game frame and the depth buffer to extract the shape and light of the scene, then works out the change each scene needs and composites it step by step. It does not change the game's rendering; using only what is already on screen it adds screen-space lighting such as SSAO, SSGI and SSR, plus lens and film character.">LumiShade는 게임 화면 프레임과 깊이 버퍼를 읽어 장면의 형태와 빛을 추출하고, 장면마다 필요한 변화량을 계산해 단계별로 합성합니다. 게임의 그림 자체는 바꾸지 않고, 화면에 이미 있는 정보만으로 SSAO, SSGI, SSR 같은 화면 공간 조명 효과와 렌즈·필름 표현을 더합니다.</p>
+
+  <section class="see-fx">
+    <h2 data-ko="효과만 떼어서 보기" data-en="The effects on their own">효과만 떼어서 보기</h2>
+    <p class="lead" data-ko="아래는 게임의 색과 질감을 지우고, 깊이 버퍼에서 읽은 면의 방향(노멀)을 색으로 칠한 화면입니다. 카메라를 보는 면은 푸른 보라, 위를 보는 면은 연두, 옆을 보는 면은 분홍 계열입니다. 막대 오른쪽은 그 위에 LumiShade가 바꾼 밝기만 입힌 것으로, SSAO(틈과 오목한 곳의 가림), SSGI(반사광과 넓은 범위의 가림), 형태 음영, 빛 웅덩이, 공기 빛, 비네트가 여기에 담깁니다." data-en="Below, the game's colour and texture are removed and each surface is painted with its direction (normal) as read from the depth buffer: surfaces facing the camera are blue-violet, upward-facing ones green, sideways ones pink. To the right of the bar, only the brightness LumiShade changed is applied on top: SSAO (creases and gaps), SSGI (bounce light and large-scale occlusion), form shading, light pools, air light and vignette.">아래는 게임의 색과 질감을 지우고, 깊이 버퍼에서 읽은 면의 방향(노멀)을 색으로 칠한 화면입니다. 카메라를 보는 면은 푸른 보라, 위를 보는 면은 연두, 옆을 보는 면은 분홍 계열입니다. 막대 오른쪽은 그 위에 LumiShade가 바꾼 밝기만 입힌 것으로, SSAO(틈과 오목한 곳의 가림), SSGI(반사광과 넓은 범위의 가림), 형태 음영, 빛 웅덩이, 공기 빛, 비네트가 여기에 담깁니다.</p>
+    <div class="cmp" id="cmp" tabindex="0" aria-label="Normals / effects">
+      <img class="after" id="imgR" alt="">
+      <img class="before" id="imgL" src="images/how/normal.jpg?v=20261115" alt="">
+      <div class="bar"><div class="knob">⇆</div></div>
+      <div class="tag l" data-ko="면 방향 (노멀)" data-en="Surface direction (normals)">면 방향 (노멀)</div>
+      <div class="tag r" id="tagR"></div>
+    </div>
+    <div class="tabs" id="tabs">
+      <button class="btn" data-view="fx" data-ko="효과 입힘" data-en="With effects">효과 입힘</button>
+      <button class="btn" data-view="fx2" data-ko="2배 강조" data-en="2× emphasis">2배 강조</button>
+      <button class="btn" data-view="clay" data-ko="회색 점토" data-en="Grey clay">회색 점토</button>
+      <button class="btn" data-view="orig" data-ko="게임 원본" data-en="Game frame">게임 원본</button>
+    </div>
+    <p class="note" data-ko="효과 화면은 '최종 화면 밝기 ÷ 게임 원본 밝기'를 면 방향 색에 곱한 것입니다. 게임의 질감과 원래 조명은 나눗셈에서 지워지고 LumiShade가 더한 것만 남습니다. '회색 점토'는 면 색까지 지운 것이고, '게임 원본'과 비교하면 안개에 가려 보이지 않던 먼 산도 깊이에서는 또렷하게 읽히는 것을 볼 수 있습니다. 화면마다 캡처한 순간이 조금 달라 캐릭터 자세가 어긋나 보일 수 있습니다." data-en="The effect view multiplies the surface colour by final brightness ÷ original brightness. The game's texture and its own lighting cancel in the division, leaving only what LumiShade adds. Grey clay removes the surface colour as well; against the game frame you can see that distant hills hidden by haze are still read clearly from depth. The captures were taken moments apart, so the character's pose may not line up.">효과 화면은 '최종 화면 밝기 ÷ 게임 원본 밝기'를 면 방향 색에 곱한 것입니다. 게임의 질감과 원래 조명은 나눗셈에서 지워지고 LumiShade가 더한 것만 남습니다. '회색 점토'는 면 색까지 지운 것이고, '게임 원본'과 비교하면 안개에 가려 보이지 않던 먼 산도 깊이에서는 또렷하게 읽히는 것을 볼 수 있습니다. 화면마다 캡처한 순간이 조금 달라 캐릭터 자세가 어긋나 보일 수 있습니다.</p>
+  </section>
+
+  <section class="see-fx">
+    <h2 data-ko="디헤이즈가 읽는 것" data-en="What dehaze reads">디헤이즈가 읽는 것</h2>
+    <p class="lead" data-ko="맨 앞 단계인 디헤이즈는 화면 색만으로 뿌연 막의 색과 짙기를 추정합니다. 가까운 바닥과 캐릭터는 짙기가 0이라 건드리지 않습니다." data-en="Dehaze, the first step, estimates the colour and density of the veil from the frame alone. The near ground and the character have zero density and are left untouched.">맨 앞 단계인 디헤이즈는 화면 색만으로 뿌연 막의 색과 짙기를 추정합니다. 가까운 바닥과 캐릭터는 짙기가 0이라 건드리지 않습니다.</p>
+    <div class="figs">
+      <figure><img loading="lazy" src="images/how/dh_orig.jpg?v=20261115" alt=""><figcaption data-ko="게임 원본" data-en="Game frame">게임 원본</figcaption></figure>
+      <figure><img loading="lazy" src="images/how/dh_color.jpg?v=20261115" alt=""><figcaption data-ko="추정한 안개 색" data-en="Estimated haze colour">추정한 안개 색</figcaption></figure>
+      <figure><img loading="lazy" src="images/how/dh_dens.jpg?v=20261115" alt=""><figcaption data-ko="추정한 짙기 (밝을수록 짙음)" data-en="Estimated density (brighter = denser)">추정한 짙기 (밝을수록 짙음)</figcaption></figure>
+      <figure><img loading="lazy" src="images/how/dh_bloom.jpg?v=20261115" alt=""><figcaption data-ko="걷어 내는 블룸 막 (4배 밝게)" data-en="Bloom veil removed (shown 4× brighter)">걷어 내는 블룸 막 (4배 밝게)</figcaption></figure>
+    </div>
+  </section>
+
+  <h2 class="h2" data-ko="전체 흐름" data-en="The whole pipeline">전체 흐름</h2>
   <div class="legend">
     <span><i style="border-color:var(--depth)"></i><em data-ko="깊이에서 추출" data-en="from depth">깊이에서 추출</em></span>
     <span><i style="border-color:var(--color)"></i><em data-ko="화면 색에서 추출" data-en="from frame colour">화면 색에서 추출</em></span>
@@ -94,48 +145,60 @@
     <h2 data-ko="적용 순서" data-en="In order">적용 순서</h2>
     <div class="step"><div class="sn">0</div><div class="sb">
       <h3 data-ko="장면 정보 뽑기" data-en="Reading the scene">장면 정보 뽑기</h3>
-      <p data-ko="깊이 버퍼에서 선형 깊이를 만들고, 그 깊이로 면의 방향(노멀), 풀숲, 오목한 곳(AO), 가까운 물체 뒤 그림자를 계산합니다. 캐릭터 거리를 따라가고, 컷 전환·메뉴·깊이가 비는 프레임을 감지해 모든 효과를 지킵니다." data-en="Linear depth is built from the depth buffer, then surface direction (normals), foliage, occlusion (AO) and shadow behind near objects are derived from it. Character distance is tracked, and cuts, menus and empty-depth frames are detected to protect every effect.">깊이 버퍼에서 선형 깊이를 만들고, 그 깊이로 면의 방향(노멀), 풀숲, 오목한 곳(AO), 가까운 물체 뒤 그림자를 계산합니다. 캐릭터 거리를 따라가고, 컷 전환·메뉴·깊이가 비는 프레임을 감지해 모든 효과를 지킵니다.</p>
+      <p data-ko="깊이 버퍼에서 선형 깊이를 만들고, 그 깊이로 면의 방향(노멀), 풀숲, 캐릭터까지의 거리를 구합니다. 위 그림에서 색으로 칠한 것이 바로 이 노멀입니다. 컷 전환·메뉴·깊이가 비는 프레임과 카메라의 움직임을 감지해 모든 효과를 지킵니다." data-en="Linear depth is built from the depth buffer, then surface direction (normals), foliage and the distance to the character are derived from it. The colours in the figure above are these normals. Cuts, menus, empty-depth frames and camera motion are detected to protect every effect.">깊이 버퍼에서 선형 깊이를 만들고, 그 깊이로 면의 방향(노멀), 풀숲, 캐릭터까지의 거리를 구합니다. 위 그림에서 색으로 칠한 것이 바로 이 노멀입니다. 컷 전환·메뉴·깊이가 비는 프레임과 카메라의 움직임을 감지해 모든 효과를 지킵니다.</p>
       <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="이 단계는 화면에 직접 그리지 않습니다. 이후 모든 효과가 이 정보를 같이 씁니다." data-en="Nothing is drawn here; every later effect shares this data.">이 단계는 화면에 직접 그리지 않습니다. 이후 모든 효과가 이 정보를 같이 씁니다.</em></p>
     </div></div>
     <div class="step"><div class="sn">1</div><div class="sb">
-      <h3 data-ko="색 보정 — 보라·회색 톤 교정" data-en="Colour grade — correcting the purple-grey tone">색 보정 — 보라·회색 톤 교정</h3>
-      <p data-ko="원신 기본 화면은 전체적으로 색이 보라·회색 톤 쪽으로 기울어 있고, 특히 그늘과 중간 톤에서 그 기운이 두드러집니다. LumiShade는 여러 장면을 기준으로 직접 만든 3D LUT로 이 톤을 교정합니다. 보라·회색 기운을 덜어 색조를 자연스러운 쪽으로 옮기고, 중간 톤의 대비와 채도를 조금 더 살려 색이 선명하게 보이게 합니다."
-         data-en="Genshin's default image leans toward a purple-grey tone overall, most noticeably in shadows and mid-tones. LumiShade corrects this tone with a 3D LUT built against many scenes: it eases the purple-grey cast so hues sit in a more natural place, and gives mid-tone contrast and saturation a little more life so colours read clearly.">원신 기본 화면은 전체적으로 색이 보라·회색 톤 쪽으로 기울어 있고, 특히 그늘과 중간 톤에서 그 기운이 두드러집니다. LumiShade는 여러 장면을 기준으로 직접 만든 3D LUT로 이 톤을 교정합니다. 보라·회색 기운을 덜어 색조를 자연스러운 쪽으로 옮기고, 중간 톤의 대비와 채도를 조금 더 살려 색이 선명하게 보이게 합니다.</p>
-      <p data-ko="교정하되 다음 세 가지는 보존합니다. 첫째, 먼 곳은 공기감이 남도록 채도를 살짝 덜어 내는데, 이때 경계를 지키며 흐린 거리 값을 써서 캐릭터 둘레에 테가 생기지 않습니다. 둘째, 그늘이 원래보다 어두워져 뭉개지지 않게 암부 밝기를 보호합니다. 셋째, 그늘에 낀 보라 기운만 걷어 내고, 원래 보라색인 옷·꽃·장식은 그대로 둡니다."
-         data-en="The correction preserves three things. Distant areas keep a little air by easing their saturation, using an edge-aware blurred distance so no halo forms around characters. Shadow brightness is protected so shade never gets darker or crushed. Only the purple cast in shade is removed; clothes, flowers and ornaments that are actually purple stay as they are.">교정하되 다음 세 가지는 보존합니다. 첫째, 먼 곳은 공기감이 남도록 채도를 살짝 덜어 내는데, 이때 경계를 지키며 흐린 거리 값을 써서 캐릭터 둘레에 테가 생기지 않습니다. 둘째, 그늘이 원래보다 어두워져 뭉개지지 않게 암부 밝기를 보호합니다. 셋째, 그늘에 낀 보라 기운만 걷어 내고, 원래 보라색인 옷·꽃·장식은 그대로 둡니다.</p>
-      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="그늘과 중간 톤의 보라·회색 기운이 걷혀 색이 맑고 또렷해집니다. 하늘·물·피부색이 자연스러운 색으로 보이고, 먼 산은 공기감은 남긴 채 더 깔끔해 보입니다. 이후 모든 조명 효과가 이 교정된 색 위에서 동작합니다." data-en="With the purple-grey cast lifted from shadows and mid-tones, colours look clear and defined. Skies, water and skin read in natural tones, and distant hills stay airy while looking cleaner. Every lighting effect after this works on top of these corrected colours.">그늘과 중간 톤의 보라·회색 기운이 걷혀 색이 맑고 또렷해집니다. 하늘·물·피부색이 자연스러운 색으로 보이고, 먼 산은 공기감은 남긴 채 더 깔끔해 보입니다. 이후 모든 조명 효과가 이 교정된 색 위에서 동작합니다.</em></p>
+      <h3 data-ko="디헤이즈 — 뿌연 막 걷기" data-en="Dehaze — lifting the veil">디헤이즈 — 뿌연 막 걷기</h3>
+      <p data-ko="원신 화면에는 밝은 곳 둘레로 번진 뿌연 블룸과 먼 곳을 덮는 옅은 안개가 깔려 있습니다. 화면을 작은 칸으로 나눠, 칸마다 가장 어두운 색이 얼마나 떠 있는지를 보고 안개의 색과 짙기를 추정한 뒤(다크 채널 방식) 그만큼을 걷어 냅니다." data-en="Genshin's image carries a milky bloom around bright areas and a thin haze over the distance. The frame is split into small cells; how far the darkest colour in each cell is lifted gives the colour and density of the haze (the dark-channel approach), and that much is removed.">원신 화면에는 밝은 곳 둘레로 번진 뿌연 블룸과 먼 곳을 덮는 옅은 안개가 깔려 있습니다. 화면을 작은 칸으로 나눠, 칸마다 가장 어두운 색이 얼마나 떠 있는지를 보고 안개의 색과 짙기를 추정한 뒤(다크 채널 방식) 그만큼을 걷어 냅니다.</p>
+      <p data-ko="깊이는 가까운 범위를 가르는 데만 씁니다. 캐릭터와 근경은 건드리지 않고 중간 거리부터 서서히 적용하며, 하늘이나 광원처럼 스스로 밝은 것은 그대로 둡니다. 색 보정보다 앞에 두어, 이후 단계가 막이 걷힌 화면 위에서 동작합니다." data-en="Depth is used only to split off the near range: characters and the foreground are left alone, the effect fades in from mid distance, and things that are bright by themselves (sky, light sources) are kept. It runs before the colour grade, so every later step works on the cleared image.">깊이는 가까운 범위를 가르는 데만 씁니다. 캐릭터와 근경은 건드리지 않고 중간 거리부터 서서히 적용하며, 하늘이나 광원처럼 스스로 밝은 것은 그대로 둡니다. 색 보정보다 앞에 두어, 이후 단계가 막이 걷힌 화면 위에서 동작합니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="뿌연 막이 걷혀 피사체가 또렷해지고, 원경의 색과 윤곽이 살아납니다." data-en="With the veil lifted, subjects read clearly and the distance regains colour and outline.">뿌연 막이 걷혀 피사체가 또렷해지고, 원경의 색과 윤곽이 살아납니다.</em></p>
     </div></div>
     <div class="step"><div class="sn">2</div><div class="sb">
-      <h3 data-ko="형태 · 조명" data-en="Form &amp; lighting">형태 · 조명</h3>
-      <p data-ko="노멀로 빛을 받는 면과 등진 면을 나눠 형태 음영을 넣고, 스페큘러(GGX)·림·투톤을 더합니다. 배경은 넓게 다듬은 노멀을 써서 로우폴리 면이 꺾여 보이지 않게 하고, 캐릭터는 매끈한 노멀로 찰흙 같은 부드러운 덩어리감을 줍니다. AO와 배경 분리 음영은 반해상도에서 두 프레임에 나눠 계산한 뒤 깊이가 같은 칸만 섞어 키웁니다." data-en="Normals split lit and unlit sides for form shading, plus GGX specular, rim and two-tone. The background uses widely smoothed normals so low-poly facets do not show; characters get smooth normals for a soft clay-like volume. AO and separation shading are computed at half resolution across two frames and upsampled using only same-depth cells.">노멀로 빛을 받는 면과 등진 면을 나눠 형태 음영을 넣고, 스페큘러(GGX)·림·투톤을 더합니다. 배경은 넓게 다듬은 노멀을 써서 로우폴리 면이 꺾여 보이지 않게 하고, 캐릭터는 매끈한 노멀로 찰흙 같은 부드러운 덩어리감을 줍니다. AO와 배경 분리 음영은 반해상도에서 두 프레임에 나눠 계산한 뒤 깊이가 같은 칸만 섞어 키웁니다.</p>
-      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="평평하던 벽·바위·캐릭터에 입체감이 생기고, 물체가 배경에서 떨어져 보입니다." data-en="Flat walls, rocks and characters gain volume and objects separate from the background.">평평하던 벽·바위·캐릭터에 입체감이 생기고, 물체가 배경에서 떨어져 보입니다.</em></p>
+      <h3 data-ko="색 보정 — 보라·회색 톤 교정" data-en="Colour grade — correcting the purple-grey tone">색 보정 — 보라·회색 톤 교정</h3>
+      <p data-ko="원신 기본 화면은 전체적으로 색이 보라·회색 톤 쪽으로 기울어 있고, 특히 그늘과 중간 톤에서 그 기운이 두드러집니다. LumiShade는 여러 장면을 기준으로 직접 만든 3D LUT로 이 톤을 교정합니다. 보라·회색 기운을 덜어 색조를 자연스러운 쪽으로 옮기고, 중간 톤의 대비와 채도를 조금 더 살려 색이 선명하게 보이게 합니다." data-en="Genshin's default image leans toward a purple-grey tone overall, most noticeably in shadows and mid-tones. LumiShade corrects this tone with a 3D LUT built against many scenes: it eases the purple-grey cast so hues sit in a more natural place, and gives mid-tone contrast and saturation a little more life so colours read clearly.">원신 기본 화면은 전체적으로 색이 보라·회색 톤 쪽으로 기울어 있고, 특히 그늘과 중간 톤에서 그 기운이 두드러집니다. LumiShade는 여러 장면을 기준으로 직접 만든 3D LUT로 이 톤을 교정합니다. 보라·회색 기운을 덜어 색조를 자연스러운 쪽으로 옮기고, 중간 톤의 대비와 채도를 조금 더 살려 색이 선명하게 보이게 합니다.</p>
+      <p data-ko="교정하되 다음은 보존합니다. 먼 곳은 공기감이 남도록 채도를 살짝 덜어 내고, 그늘이 원래보다 어두워져 뭉개지지 않게 암부 밝기를 보호합니다. 그늘에 낀 보라 기운만 걷어 내고 원래 보라색인 옷·꽃·장식은 그대로 둡니다. 캐릭터 피부는 주황으로 치우치지 않게 원래 살색 쪽으로 되돌립니다." data-en="The correction preserves a few things. Distant areas keep a little air by easing their saturation, and shadow brightness is protected so shade never gets crushed. Only the purple cast in shade is removed; clothes, flowers and ornaments that are actually purple stay as they are. Character skin is pulled back toward its original tone so it does not drift to orange.">교정하되 다음은 보존합니다. 먼 곳은 공기감이 남도록 채도를 살짝 덜어 내고, 그늘이 원래보다 어두워져 뭉개지지 않게 암부 밝기를 보호합니다. 그늘에 낀 보라 기운만 걷어 내고 원래 보라색인 옷·꽃·장식은 그대로 둡니다. 캐릭터 피부는 주황으로 치우치지 않게 원래 살색 쪽으로 되돌립니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="그늘과 중간 톤의 보라·회색 기운이 걷혀 색이 맑고 또렷해집니다. 이후 모든 조명 효과가 이 교정된 색 위에서 동작합니다." data-en="With the purple-grey cast lifted from shadows and mid-tones, colours look clear and defined. Every lighting effect after this works on top of these corrected colours.">그늘과 중간 톤의 보라·회색 기운이 걷혀 색이 맑고 또렷해집니다. 이후 모든 조명 효과가 이 교정된 색 위에서 동작합니다.</em></p>
     </div></div>
     <div class="step"><div class="sn">3</div><div class="sb">
-      <h3 data-ko="반사광 · 접촉 그림자" data-en="Bounce &amp; contact shadow">반사광 · 접촉 그림자</h3>
-      <p data-ko="빛 받은 평평한 면을 빛 원천으로 삼아, 주변 8방향 3거리에서 서로 마주 보는 면끼리만 빛을 모읍니다(1/4 해상도, 두 프레임 분할). 깊이를 지키며 흐린 뒤 그늘에만 받는 면의 색으로 더합니다. 바닥에는 기둥·소품이 닿는 자리에 짧고 진한 접촉 그림자를 넣습니다." data-en="Lit flat surfaces act as light sources; light is gathered from 8 directions at 3 distances, only between surfaces that face each other (quarter resolution, split over two frames). After an edge-aware blur it is added only in shade, tinted by the receiving surface. Short contact shadows are placed where pillars and props meet the floor.">빛 받은 평평한 면을 빛 원천으로 삼아, 주변 8방향 3거리에서 서로 마주 보는 면끼리만 빛을 모읍니다(1/4 해상도, 두 프레임 분할). 깊이를 지키며 흐린 뒤 그늘에만 받는 면의 색으로 더합니다. 바닥에는 기둥·소품이 닿는 자리에 짧고 진한 접촉 그림자를 넣습니다.</p>
-      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="그늘이 한 톤으로 뭉치지 않고 주변 색을 머금고, 물체가 바닥에 붙어 보입니다." data-en="Shade carries the colour of its surroundings and objects sit on the ground.">그늘이 한 톤으로 뭉치지 않고 주변 색을 머금고, 물체가 바닥에 붙어 보입니다.</em></p>
+      <h3 data-ko="라이트맵 · 형태 · 조명 (SSAO)" data-en="Lightmap · form · lighting (SSAO)">라이트맵 · 형태 · 조명 (SSAO)</h3>
+      <p data-ko="먼저 화면을 '빛 × 재질 색'으로 나눠 장면의 실제 조명만 따로 뽑습니다(화면 공간 라이트맵). 여기서 주 빛의 방향과 색을 추정하고, 이후의 조명 효과는 고정된 가정 대신 이 값을 따라갑니다. 어두운 재질과 진짜 그늘도 여기서 구분합니다." data-en="First the frame is split into light × surface colour, isolating the scene's real lighting (a screen-space lightmap). The direction and colour of the key light are estimated from it, and the lighting effects follow these instead of fixed assumptions. Dark materials are told apart from real shade here too.">먼저 화면을 '빛 × 재질 색'으로 나눠 장면의 실제 조명만 따로 뽑습니다(화면 공간 라이트맵). 여기서 주 빛의 방향과 색을 추정하고, 이후의 조명 효과는 고정된 가정 대신 이 값을 따라갑니다. 어두운 재질과 진짜 그늘도 여기서 구분합니다.</p>
+      <p data-ko="노멀로 빛을 받는 면과 등진 면을 나눠 형태 음영을 넣고, 스페큘러(GGX)와 림을 더하고, 그림자 경계를 같은 면을 따라 부드럽게 잇습니다. 오목한 곳과 물체가 맞닿는 틈은 SSAO(화면 공간 주변 가림)로 가라앉힙니다. SSAO는 반해상도에서 두 프레임에 나눠 계산한 뒤 깊이가 같은 칸만 섞어 키우고, 밝은 재질일수록 덜 어두워지게 합니다(빛이 여러 번 튀는 것을 근사)." data-en="Normals split lit and unlit sides for form shading, GGX specular and rim are added, and shadow edges are softened along the same surface. Creases and the gaps where objects meet are settled with SSAO (screen-space ambient occlusion). It is computed at half resolution across two frames, upsampled using only same-depth cells, and darkens bright materials less (an approximation of light bouncing several times).">노멀로 빛을 받는 면과 등진 면을 나눠 형태 음영을 넣고, 스페큘러(GGX)와 림을 더하고, 그림자 경계를 같은 면을 따라 부드럽게 잇습니다. 오목한 곳과 물체가 맞닿는 틈은 SSAO(화면 공간 주변 가림)로 가라앉힙니다. SSAO는 반해상도에서 두 프레임에 나눠 계산한 뒤 깊이가 같은 칸만 섞어 키우고, 밝은 재질일수록 덜 어두워지게 합니다(빛이 여러 번 튀는 것을 근사).</p>
+      <p data-ko="배경은 넓게 다듬은 노멀을 써서 로우폴리 면이 꺾여 보이지 않게 합니다. 캐릭터는 매끈한 노멀로 부드러운 덩어리감을 주고, 피부에는 회색이 아닌 피부의 그늘 색으로 음영을 얹습니다." data-en="The background uses widely smoothed normals so low-poly facets do not show. Characters get smooth normals for a soft sense of volume, and shading on skin uses the skin's own shade colour rather than grey.">배경은 넓게 다듬은 노멀을 써서 로우폴리 면이 꺾여 보이지 않게 합니다. 캐릭터는 매끈한 노멀로 부드러운 덩어리감을 주고, 피부에는 회색이 아닌 피부의 그늘 색으로 음영을 얹습니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="평평하던 벽·바위·캐릭터에 입체감이 생기고, 물체가 배경에서 떨어져 보입니다." data-en="Flat walls, rocks and characters gain volume and objects separate from the background.">평평하던 벽·바위·캐릭터에 입체감이 생기고, 물체가 배경에서 떨어져 보입니다.</em></p>
     </div></div>
     <div class="step"><div class="sn">4</div><div class="sb">
+      <h3 data-ko="반사광 (SSGI) · 접촉 그림자" data-en="Bounce light (SSGI) · contact shadow">반사광 (SSGI) · 접촉 그림자</h3>
+      <p data-ko="SSGI(화면 공간 전역 조명)는 한 면이 받은 빛이 옆 면으로 튀는 것을 화면 정보만으로 근사합니다. 받는 점에서 여러 방향으로 걸어 나가며 지평선이 얼마나 올라오는지를 재고, 이 한 번의 계산으로 세 가지를 함께 얻습니다. 주변에 가려진 정도(넓은 범위의 가림), 지평선을 올린 면이 되돌려 보내는 반사광, 그리고 하늘로 열린 만큼 들어오는 하늘빛입니다." data-en="SSGI (screen-space global illumination) approximates light bouncing from one surface to the next using only what is on screen. From each receiving point it walks outward in several directions and measures how far the horizon rises; that one calculation yields three things together: how occluded the point is (large-scale occlusion), the light sent back by the surfaces that raise the horizon, and the sky light that comes in where it is open.">SSGI(화면 공간 전역 조명)는 한 면이 받은 빛이 옆 면으로 튀는 것을 화면 정보만으로 근사합니다. 받는 점에서 여러 방향으로 걸어 나가며 지평선이 얼마나 올라오는지를 재고, 이 한 번의 계산으로 세 가지를 함께 얻습니다. 주변에 가려진 정도(넓은 범위의 가림), 지평선을 올린 면이 되돌려 보내는 반사광, 그리고 하늘로 열린 만큼 들어오는 하늘빛입니다.</p>
+      <p data-ko="프레임마다 방향을 돌려 가며 4방향 × 5거리를 재고 여러 프레임에 걸쳐 누적합니다(1/4 해상도). 깊이를 지키며 흐린 뒤 그늘에만, 받는 면의 색으로 더합니다. 바닥에는 기둥·소품이 닿는 자리에 짧고 진한 접촉 그림자를 넣습니다." data-en="Each frame samples 4 directions × 5 distances with a rotating pattern and accumulates over several frames (quarter resolution). After an edge-aware blur the result is added only in shade, tinted by the receiving surface. Short contact shadows are placed where pillars and props meet the floor.">프레임마다 방향을 돌려 가며 4방향 × 5거리를 재고 여러 프레임에 걸쳐 누적합니다(1/4 해상도). 깊이를 지키며 흐린 뒤 그늘에만, 받는 면의 색으로 더합니다. 바닥에는 기둥·소품이 닿는 자리에 짧고 진한 접촉 그림자를 넣습니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="그늘이 한 톤으로 뭉치지 않고 주변 색과 하늘빛을 머금습니다. 방 모서리처럼 막힌 곳은 조금 더 가라앉고, 물체가 바닥에 붙어 보입니다." data-en="Shade carries the colour of its surroundings and of the sky, enclosed corners settle a little, and objects sit on the ground.">그늘이 한 톤으로 뭉치지 않고 주변 색과 하늘빛을 머금습니다. 방 모서리처럼 막힌 곳은 조금 더 가라앉고, 물체가 바닥에 붙어 보입니다.</em></p>
+    </div></div>
+    <div class="step"><div class="sn">5</div><div class="sb">
       <h3 data-ko="공기 빛" data-en="Air light">공기 빛</h3>
       <p data-ko="화면을 64×36 칸으로 나눠 광원(등불·창·역광)의 위치와 색을 찾고, 실내·창문·닫힌 공간 같은 장면 패턴을 판정합니다. 광원 둘레 공기에 산란을 깔고 광원 쪽으로 빛기둥을 뽑으며, 실내에서는 광원 색이 주변 면에 스며들게 합니다. 모든 판정은 몇 초에 걸쳐 서서히 바뀌어 튀지 않습니다." data-en="The frame is split into a 64×36 grid to find light sources (lamps, windows, backlight) and classify scene patterns such as interiors, windows and enclosed spaces. Scattering fills the air around the light, shafts stream from it, and indoors the light colour falls on nearby surfaces. Every state ramps over seconds so nothing pops.">화면을 64×36 칸으로 나눠 광원(등불·창·역광)의 위치와 색을 찾고, 실내·창문·닫힌 공간 같은 장면 패턴을 판정합니다. 광원 둘레 공기에 산란을 깔고 광원 쪽으로 빛기둥을 뽑으며, 실내에서는 광원 색이 주변 면에 스며들게 합니다. 모든 판정은 몇 초에 걸쳐 서서히 바뀌어 튀지 않습니다.</p>
       <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="등불과 창 주변 공기가 빛나고, 빛이 어디서 오는지 느껴집니다." data-en="The air around lamps and windows glows and you can feel where light comes from.">등불과 창 주변 공기가 빛나고, 빛이 어디서 오는지 느껴집니다.</em></p>
     </div></div>
-    <div class="step"><div class="sn">5</div><div class="sb">
-      <h3 data-ko="바닥 반사 · 샤픈" data-en="Floor reflection · sharpen">바닥 반사 · 샤픈</h3>
-      <p data-ko="실내의 매끈하고 수평인 바닥만 골라 화면 공간 광선 추적으로 반사를 찾고, 비스듬히 볼수록 강하게(프레넬) 최대 15%만 섞습니다. 이어서 깊이 경계를 피하는 샤픈으로 질감을 살립니다." data-en="Only smooth, level indoor floors get a screen-space ray-traced reflection, mixed by Fresnel up to 15%. A sharpen that avoids depth edges then brings out texture.">실내의 매끈하고 수평인 바닥만 골라 화면 공간 광선 추적으로 반사를 찾고, 비스듬히 볼수록 강하게(프레넬) 최대 15%만 섞습니다. 이어서 깊이 경계를 피하는 샤픈으로 질감을 살립니다.</p>
-      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="광택 바닥에 은은한 윤기가 생기고 디테일이 또렷해집니다." data-en="Polished floors get a soft sheen and detail reads more clearly.">광택 바닥에 은은한 윤기가 생기고 디테일이 또렷해집니다.</em></p>
-    </div></div>
     <div class="step"><div class="sn">6</div><div class="sb">
+      <h3 data-ko="바닥 반사 (SSR)" data-en="Floor reflection (SSR)">바닥 반사 (SSR)</h3>
+      <p data-ko="실내의 매끈하고 수평인 바닥만 골라 SSR(화면 공간 반사)로 반사를 찾고, 비스듬히 볼수록 강하게(프레넬) 최대 15%만 섞습니다." data-en="Only smooth, level indoor floors get an SSR (screen-space reflection) trace, mixed by Fresnel up to 15%.">실내의 매끈하고 수평인 바닥만 골라 SSR(화면 공간 반사)로 반사를 찾고, 비스듬히 볼수록 강하게(프레넬) 최대 15%만 섞습니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="광택 바닥에 은은한 윤기가 생깁니다." data-en="Polished floors get a soft sheen.">광택 바닥에 은은한 윤기가 생깁니다.</em></p>
+    </div></div>
+    <div class="step"><div class="sn">7</div><div class="sb">
       <h3 data-ko="원경 블러 · 플레어" data-en="Far blur · flare">원경 블러 · 플레어</h3>
       <p data-ko="먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 아나모픽 렌즈 플레어를 만듭니다." data-en="Only distant areas are softened by under a pixel for depth, never mixing near objects. Of the bright sources, only the top three with a halo get an anamorphic lens flare.">먼 곳만 1픽셀 안쪽으로 아주 옅게 흐려 거리감을 주고, 가까운 물체는 섞지 않습니다. 밝은 광원 중 빛무리가 있는 상위 3개만 골라 아나모픽 렌즈 플레어를 만듭니다.</p>
       <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="원경이 살짝 물러나고, 등불·해에서 영화 같은 수평 빛줄기가 뻗습니다." data-en="Distance recedes a little and lamps or the sun throw cinematic horizontal streaks.">원경이 살짝 물러나고, 등불·해에서 영화 같은 수평 빛줄기가 뻗습니다.</em></p>
     </div></div>
-    <div class="step"><div class="sn">7</div><div class="sb">
-      <h3 data-ko="렌즈 · 비네트 · 어둠 톤" data-en="Lens · vignette · dark tone">렌즈 · 비네트 · 어둠 톤</h3>
-      <p data-ko="장면 밝기를 측정해 사람 눈처럼 몇 초에 걸쳐 적응합니다. 어두울수록 비네트가 안쪽까지 들어오고, 장면 평균보다 밝은 곳은 더 밝게, 그늘은 살짝 가라앉히며 색을 빼서 빛과 어둠을 분리합니다. 여기에 미세한 왜곡·색수차·고스트를 더합니다." data-en="Scene brightness is metered and adapts over seconds like an eye. The darker it is, the further the vignette reaches; areas brighter than the scene average lift while shade settles and desaturates, separating light from dark. Subtle distortion, chromatic aberration and ghosts are added.">장면 밝기를 측정해 사람 눈처럼 몇 초에 걸쳐 적응합니다. 어두울수록 비네트가 안쪽까지 들어오고, 장면 평균보다 밝은 곳은 더 밝게, 그늘은 살짝 가라앉히며 색을 빼서 빛과 어둠을 분리합니다. 여기에 미세한 왜곡·색수차·고스트를 더합니다.</p>
-      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="밤과 실내가 &#39;어둡게 한 낮&#39;이 아니라 빛이 있는 어두운 공간으로 보입니다." data-en="Nights and interiors read as dark spaces with light, not darkened daylight.">밤과 실내가 &#39;어둡게 한 낮&#39;이 아니라 빛이 있는 어두운 공간으로 보입니다.</em></p>
-    </div></div>
     <div class="step"><div class="sn">8</div><div class="sb">
+      <h3 data-ko="렌즈 · 비네트 · 어둠 톤" data-en="Lens · vignette · dark tone">렌즈 · 비네트 · 어둠 톤</h3>
+      <p data-ko="장면 밝기를 측정해 사람 눈처럼 몇 초에 걸쳐 적응합니다. 어두울수록 비네트가 안쪽까지 들어오고, 장면 평균보다 밝은 곳은 더 밝게, 그늘은 살짝 가라앉혀 빛과 어둠을 분리합니다. 여기에 실제 렌즈를 측정한 자료를 바탕으로 한 미세한 왜곡, 주변 광량 저하, 색수차를 더하되 화면 중앙은 픽셀 그대로 둡니다." data-en="Scene brightness is metered and adapts over seconds like an eye. The darker it is, the further the vignette reaches; areas brighter than the scene average lift while shade settles, separating light from dark. Subtle distortion, vignetting and chromatic aberration based on measurements of a real lens are added, while the centre of the screen stays pixel-exact.">장면 밝기를 측정해 사람 눈처럼 몇 초에 걸쳐 적응합니다. 어두울수록 비네트가 안쪽까지 들어오고, 장면 평균보다 밝은 곳은 더 밝게, 그늘은 살짝 가라앉혀 빛과 어둠을 분리합니다. 여기에 실제 렌즈를 측정한 자료를 바탕으로 한 미세한 왜곡, 주변 광량 저하, 색수차를 더하되 화면 중앙은 픽셀 그대로 둡니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="밤과 실내가 '어둡게 한 낮'이 아니라 빛이 있는 어두운 공간으로 보이고, 화면이 렌즈로 찍은 것처럼 보입니다." data-en="Nights and interiors read as dark spaces with light, not darkened daylight, and the frame looks as if shot through a lens.">밤과 실내가 '어둡게 한 낮'이 아니라 빛이 있는 어두운 공간으로 보이고, 화면이 렌즈로 찍은 것처럼 보입니다.</em></p>
+    </div></div>
+    <div class="step"><div class="sn">9</div><div class="sb">
+      <h3 data-ko="샤픈" data-en="Sharpen">샤픈</h3>
+      <p data-ko="렌즈를 지난 화면에서, 깊이 경계를 피하는 샤픈으로 질감을 살립니다. 렌즈 뒤에 두어 렌즈 처리에서 잃은 선명도까지 되찾습니다." data-en="On the image that has passed the lens, a sharpen that avoids depth edges brings out texture. Placing it after the lens also recovers the sharpness the lens step costs.">렌즈를 지난 화면에서, 깊이 경계를 피하는 샤픈으로 질감을 살립니다. 렌즈 뒤에 두어 렌즈 처리에서 잃은 선명도까지 되찾습니다.</p>
+      <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="윤곽에 테가 생기지 않으면서 디테일이 또렷해집니다." data-en="Detail reads more clearly without halos along outlines.">윤곽에 테가 생기지 않으면서 디테일이 또렷해집니다.</em></p>
+    </div></div>
+    <div class="step"><div class="sn">10</div><div class="sb">
       <h3 data-ko="필름" data-en="Film">필름</h3>
       <p data-ko="장면 밝기와 거리에 맞춰 은염 필름 입자를 얹고, 밝은 곳 둘레에 옅은 붉은 번짐(할레이션)을 줍니다. 로딩·단색 화면이면 원본으로 되돌립니다." data-en="Silver-halide grain is matched to scene brightness and distance, with a faint warm halation around highlights. Loading or flat screens fall back to the original.">장면 밝기와 거리에 맞춰 은염 필름 입자를 얹고, 밝은 곳 둘레에 옅은 붉은 번짐(할레이션)을 줍니다. 로딩·단색 화면이면 원본으로 되돌립니다.</p>
       <p class="see"><span data-ko="보이는 변화" data-en="What you see">보이는 변화</span> <em data-ko="디지털 특유의 매끈함이 줄고 화면이 한 장의 사진처럼 묶입니다." data-en="Digital smoothness is broken up and the frame holds together like a photograph.">디지털 특유의 매끈함이 줄고 화면이 한 장의 사진처럼 묶입니다.</em></p>
@@ -164,48 +227,49 @@
     ['nrm',    'b', 130, 'depth', '노멀', 'Normals', '½'],
     ['shape',  'b', 220, 'depth', '형태·넓은 노멀', 'Shape / wide normals', '½ · ⅛'],
     ['fol',    'b', 310, 'depth', '풀숲 지도', 'Foliage map', '¼'],
-    ['ao',     'b', 400, 'depth', 'AO · 배경 분리 · 마스크', 'AO · separation · masks', '½'],
+    ['ao',     'b', 400, 'depth', 'SSAO · 배경 분리 · 마스크', 'SSAO · separation · masks', '½'],
     ['chr',    'b', 490, 'depth', '캐릭터 추적', 'Character tracking', '1×1'],
-    ['stab',   'b', 580, 'depth', '컷 · 안정도', 'Cut · stability', '1×1'],
+    ['stab',   'b', 580, 'depth', '컷 · 안정도 · 카메라 움직임', 'Cut · stability · motion', '1×1'],
     // 합성 체인
-    ['c1',  'c', 40,  'chain', '1 · LUT 색 보정', '1 · LUT colour grade', 'FULL'],
-    ['c2',  'c', 120, 'chain', '2 · 형태 · 조명', '2 · Form · lighting', 'FULL'],
-    ['c3',  'c', 200, 'chain', '3 · 반사광 · 접촉 그림자', '3 · Bounce · contact shadow', 'FULL'],
-    ['c4',  'c', 280, 'chain', '4 · 공기 빛 (산란 · 빛기둥)', '4 · Air light (scatter · shafts)', 'FULL'],
-    ['c5',  'c', 360, 'chain', '5 · 바닥 반사', '5 · Floor reflection', 'FULL'],
-    ['c6',  'c', 440, 'chain', '5 · 샤픈', '5 · Sharpen', 'FULL'],
-    ['c7',  'c', 520, 'chain', '6 · 원경 블러 · 아나모픽 렌즈 플레어', '6 · Far blur · anamorphic lens flare', 'FULL'],
-    ['c8',  'c', 600, 'chain', '7 · 렌즈 · 비네트 · 어둠 톤', '7 · Lens · vignette · dark tone', 'FULL'],
-    ['c9',  'c', 680, 'chain', '8 · 필름 그레인', '8 · Film grain', 'FULL'],
+    ['c0',  'c', 40,  'chain', '1 · 디헤이즈 (블룸 막 · 안개)', '1 · Dehaze (bloom veil · haze)', 'FULL · ⅛'],
+    ['c1',  'c', 112, 'chain', '2 · LUT 색 보정', '2 · LUT colour grade', 'FULL'],
+    ['c2',  'c', 184, 'chain', '3 · 형태 · 조명 (SSAO)', '3 · Form · lighting (SSAO)', 'FULL'],
+    ['c3',  'c', 256, 'chain', '4 · 반사광 (SSGI) · 접촉 그림자', '4 · Bounce (SSGI) · contact shadow', 'FULL'],
+    ['c4',  'c', 328, 'chain', '5 · 공기 빛 (산란 · 빛기둥)', '5 · Air light (scatter · shafts)', 'FULL'],
+    ['c5',  'c', 400, 'chain', '6 · 바닥 반사 (SSR)', '6 · Floor reflection (SSR)', 'FULL'],
+    ['c7',  'c', 472, 'chain', '7 · 원경 블러 · 아나모픽 렌즈 플레어', '7 · Far blur · anamorphic lens flare', 'FULL'],
+    ['c8',  'c', 544, 'chain', '8 · 렌즈 · 비네트 · 어둠 톤', '8 · Lens · vignette · dark tone', 'FULL'],
+    ['c6',  'c', 616, 'chain', '9 · 샤픈', '9 · Sharpen', 'FULL'],
+    ['c9',  'c', 688, 'chain', '10 · 필름 그레인', '10 · Film grain', 'FULL'],
     ['out', 'c', 790, 'out',   '최종 화면', 'Final image', ''],
     // 화면 색에서 추출 (합성 중간 결과에서)
-    ['env',   'e', 80,  'color', '주변광 지도', 'Ambient map', '¼ · ⅛'],
-    ['bsrc',  'e', 160, 'color', '반사광 원천 → 수집', 'Bounce sources → gather', '½ → ¼'],
-    ['lmap',  'e', 240, 'color', '광원 지도 · 장면 상태', 'Light map · scene state', '64×36 · 1×1'],
-    ['rays',  'e', 320, 'color', '빛무리 · 빛기둥', 'Halo field · shafts', '⅛ · ½'],
-    ['ssr',   'e', 380, 'color', '반사 추적', 'Reflection trace', '½'],
-    ['fsrc',  'e', 480, 'color', '플레어 광원 선택 → 아나모픽 렌즈 플레어', 'Flare pick → anamorphic lens flare', '½ · 30×17'],
-    ['exp',   'e', 560, 'color', '노출 측광', 'Exposure metering', '64×36'],
-    ['iso',   'e', 650, 'color', '감도 · 할레이션', 'ISO · halation', '¼ · ½']
+    ['lmp',   'e', 130, 'color', '라이트맵 · 주 빛 방향과 색', 'Lightmap · key light direction, colour', '½ · 1×1'],
+    ['bsrc',  'e', 205, 'color', '반사광 원천 → 지평선 추적', 'Bounce sources → horizon march', '½ → ¼'],
+    ['lmap',  'e', 275, 'color', '광원 지도 · 장면 상태', 'Light map · scene state', '64×36 · 1×1'],
+    ['rays',  'e', 335, 'color', '빛무리 · 빛기둥', 'Halo field · shafts', '⅛ · ½'],
+    ['ssr',   'e', 395, 'color', '반사 추적', 'Reflection trace', '½'],
+    ['fsrc',  'e', 455, 'color', '플레어 광원 선택 → 아나모픽 렌즈 플레어', 'Flare pick → anamorphic lens flare', '½ · 30×17'],
+    ['exp',   'e', 525, 'color', '노출 측광', 'Exposure metering', '64×36'],
+    ['iso',   'e', 660, 'color', '감도 · 할레이션', 'ISO · halation', '¼ · ½']
   ];
   // 간선: from, to, 종류
   var E = [
     ['depthBuf', 'lin', 'depth'],
     ['lin', 'nrm', 'depth'], ['lin', 'fol', 'depth'], ['lin', 'chr', 'depth'], ['lin', 'stab', 'depth'],
     ['nrm', 'shape', 'depth'], ['nrm', 'ao', 'depth'], ['fol', 'ao', 'depth'],
-    ['lin', 'c1', 'depth'],
+    ['lin', 'c0', 'depth'], ['lin', 'c1', 'depth'],
     ['shape', 'c2', 'depth'], ['ao', 'c2', 'depth'], ['chr', 'c2', 'depth'],
     ['nrm', 'c3', 'depth'], ['chr', 'c4', 'depth'], ['nrm', 'c5', 'depth'], ['lin', 'c7', 'depth'],
-    ['backBuf', 'c1', 'chain'],
-    ['c1', 'c2', 'chain'], ['c2', 'c3', 'chain'], ['c3', 'c4', 'chain'], ['c4', 'c5', 'chain'], ['c5', 'c6', 'chain'],
-    ['c6', 'c7', 'chain'], ['c7', 'c8', 'chain'], ['c8', 'c9', 'chain'], ['c9', 'out', 'chain'],
-    ['c1', 'env', 'color'], ['env', 'c2', 'color'],
+    ['backBuf', 'c0', 'chain'],
+    ['c0', 'c1', 'chain'], ['c1', 'c2', 'chain'], ['c2', 'c3', 'chain'], ['c3', 'c4', 'chain'], ['c4', 'c5', 'chain'],
+    ['c5', 'c7', 'chain'], ['c7', 'c8', 'chain'], ['c8', 'c6', 'chain'], ['c6', 'c9', 'chain'], ['c9', 'out', 'chain'],
+    ['c1', 'lmp', 'color'], ['lmp', 'c2', 'color'],
     ['c2', 'bsrc', 'color'], ['bsrc', 'c3', 'color'],
     ['c3', 'lmap', 'color'], ['lmap', 'rays', 'color'], ['rays', 'c4', 'color'],
     ['c4', 'ssr', 'color'], ['ssr', 'c5', 'color'],
-    ['c6', 'fsrc', 'color'], ['fsrc', 'c7', 'color'],
+    ['c5', 'fsrc', 'color'], ['fsrc', 'c7', 'color'],
     ['c7', 'exp', 'color'], ['exp', 'c8', 'color'],
-    ['c8', 'iso', 'color'], ['iso', 'c9', 'color']
+    ['c6', 'iso', 'color'], ['iso', 'c9', 'color']
   ];
 
   var svgNS = 'http://www.w3.org/2000/svg';
@@ -223,8 +287,8 @@
   // 안정도 가드: 합성 체인 왼쪽을 따라 내려가는 점선 버스
   var bx = CX.c - 18, s = pos.stab;
   el('path', { d: 'M' + (s.x + s.w) + ' ' + (s.y + H / 2) + ' C ' + (bx - 10) + ' ' + (s.y + H / 2) + ', ' + (bx - 10) + ' ' + (s.y + H / 2) + ', ' + bx + ' ' + (s.y + H / 2 - 20), 'class': 'e e-guard' }, edges);
-  el('path', { d: 'M' + bx + ' ' + (pos.c1.y + H / 2) + ' L ' + bx + ' ' + (pos.c9.y + H / 2), 'class': 'e e-guard' }, edges);
-  ['c1', 'c2', 'c3', 'c4', 'c5', 'c7', 'c8', 'c9'].forEach(function (id) {
+  el('path', { d: 'M' + bx + ' ' + (pos.c0.y + H / 2) + ' L ' + bx + ' ' + (pos.c9.y + H / 2), 'class': 'e e-guard' }, edges);
+  ['c0', 'c1', 'c2', 'c3', 'c4', 'c5', 'c7', 'c8', 'c9'].forEach(function (id) {
     el('path', { d: 'M' + bx + ' ' + (pos[id].y + H / 2) + ' L ' + CX.c + ' ' + (pos[id].y + H / 2), 'class': 'e e-guard' }, edges);
   });
 
@@ -253,7 +317,7 @@
       // 같은 노드로 들어가는 선은 높이를 나눠 겹치지 않게
       slot[e[1]] = (slot[e[1]] || 0) + 1;
       q5.y += [0, -13, 13, -6, 6][(slot[e[1]] - 1) % 5];
-      if (e[1] === 'c1' && e[0] === 'backBuf') q5.y = pos.c1.y + 10;
+      if (e[1] === 'c0' && e[0] === 'backBuf') q5.y = pos.c0.y + 10;
       var mx = (p5.x + q5.x) / 2;
       d = 'M' + p5.x + ' ' + p5.y + ' C ' + mx + ' ' + p5.y + ', ' + mx + ' ' + q5.y + ', ' + q5.x + ' ' + q5.y;
     }
@@ -276,6 +340,35 @@
     t.setAttribute('data-ko', n[4]); t.setAttribute('data-en', n[5]); t.textContent = n[4];
     if (n[6]) { var r = el('text', { x: p.x + 12, y: p.y + 38, 'class': 'r' }, grp); r.textContent = n[6]; }
   });
+
+  // 효과 보기: 왼쪽 = 면 방향(노멀), 오른쪽 = 고른 화면
+  var cmp = document.getElementById('cmp'), imgR = document.getElementById('imgR'), tagR = document.getElementById('tagR');
+  var VIEWS = {
+    fx:   ['fx.jpg',   '노멀 + 효과', 'Normals + effects'],
+    fx2:  ['fx2.jpg',  '노멀 + 효과 (2배 강조)', 'Normals + effects (2× emphasis)'],
+    clay: ['clay.jpg', '회색 점토 + 효과', 'Grey clay + effects'],
+    orig: ['orig.jpg', '게임 원본', 'Game frame']
+  };
+  function setView(k) {
+    var v = VIEWS[k];
+    imgR.src = 'images/how/' + v[0] + '?v=20261115';
+    tagR.setAttribute('data-ko', v[1]); tagR.setAttribute('data-en', v[2]);
+    tagR.textContent = document.documentElement.lang === 'en' ? v[2] : v[1];
+    var tb = document.querySelectorAll('#tabs .btn');
+    for (var i = 0; i < tb.length; i++) tb[i].classList.toggle('on', tb[i].dataset.view === k);
+  }
+  var tbs = document.querySelectorAll('#tabs .btn');
+  for (var ti = 0; ti < tbs.length; ti++) tbs[ti].addEventListener('click', function () { setView(this.dataset.view); });
+  setView('fx');
+  var dragging = false;
+  function setPos(clientX) {
+    var r = cmp.getBoundingClientRect();
+    cmp.style.setProperty('--pos', Math.min(Math.max((clientX - r.left) / r.width, 0), 1) * 100 + '%');
+  }
+  cmp.addEventListener('pointerdown', function (e) { dragging = true; cmp.setPointerCapture(e.pointerId); setPos(e.clientX); });
+  cmp.addEventListener('pointermove', function (e) { if (dragging) setPos(e.clientX); });
+  cmp.addEventListener('pointerup', function () { dragging = false; });
+  cmp.addEventListener('pointercancel', function () { dragging = false; });
 
   // 언어
   function setLang(l) {
