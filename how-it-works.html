@@ -123,6 +123,25 @@
   </section>
 
   <section class="see-fx">
+    <h2 data-ko="캐릭터 질감" data-en="Character surface">캐릭터 질감</h2>
+    <p class="lead" data-ko="캐릭터는 가장 공을 들인 부분입니다. 밝은 면과 그늘 면 두 단으로 칠하는 게임의 그림은 그대로 두고, 그 위에 형태 음영으로 덩어리감을 얹습니다. 머리카락과 옷이 겹치거나 맞닿는 틈은 SSAO로 가라앉히고, 어두운 재질과 피부에는 옅은 윤기를 더하며, 피부의 그늘 경계는 부드럽게 잇습니다. 얹는 음영은 회색이 아니라 그 재질이 가진 그늘 색을 따르기 때문에 색이 탁해지지 않습니다." data-en="Characters get the most care. The game's own painting, two tones for lit and shaded sides, is kept, and form shading on top gives it volume. The gaps where hair and clothing overlap or meet are settled with SSAO, dark materials and skin get a faint sheen, and the shade edge on skin is softened. The added shading follows each material's own shade colour rather than grey, so colours do not turn muddy.">캐릭터는 가장 공을 들인 부분입니다. 밝은 면과 그늘 면 두 단으로 칠하는 게임의 그림은 그대로 두고, 그 위에 형태 음영으로 덩어리감을 얹습니다. 머리카락과 옷이 겹치거나 맞닿는 틈은 SSAO로 가라앉히고, 어두운 재질과 피부에는 옅은 윤기를 더하며, 피부의 그늘 경계는 부드럽게 잇습니다. 얹는 음영은 회색이 아니라 그 재질이 가진 그늘 색을 따르기 때문에 색이 탁해지지 않습니다.</p>
+    <div class="cmp" id="cmp2" tabindex="0" aria-label="Original / LumiShade">
+      <img class="after" id="imgR2" alt="">
+      <img class="before" id="imgL2" alt="">
+      <div class="bar"><div class="knob">⇆</div></div>
+      <div class="tag l" data-ko="원본" data-en="Original">원본</div>
+      <div class="tag r">LumiShade v1.2.0</div>
+    </div>
+    <div class="tabs" id="tabs2">
+      <button class="btn" data-view="c1" data-ko="얼굴 · 상체" data-en="Face · upper body">얼굴 · 상체</button>
+      <button class="btn" data-view="c4" data-ko="옷 · 장식" data-en="Clothing · ornaments">옷 · 장식</button>
+      <button class="btn" data-view="c2" data-ko="정면" data-en="Front">정면</button>
+      <button class="btn" data-view="c3" data-ko="뒷모습 · 머리카락" data-en="Back · hair">뒷모습 · 머리카락</button>
+    </div>
+    <p class="note" data-ko="화면을 줄이지 않고 캐릭터 주변을 원본 픽셀 그대로 잘라 낸 것입니다(4K 기준). 머리카락 다발 사이, 목과 쇄골 아래, 옷의 겹친 곳과 장식의 테두리를 비교해 보세요." data-en="These are cut from around the character at native pixels, not scaled (from 4K). Compare between locks of hair, under the neck and collarbone, where clothing overlaps and along the edges of ornaments.">화면을 줄이지 않고 캐릭터 주변을 원본 픽셀 그대로 잘라 낸 것입니다(4K 기준). 머리카락 다발 사이, 목과 쇄골 아래, 옷의 겹친 곳과 장식의 테두리를 비교해 보세요.</p>
+  </section>
+
+  <section class="see-fx">
     <h2 data-ko="디헤이즈가 읽는 것" data-en="What dehaze reads">디헤이즈가 읽는 것</h2>
     <p class="lead" data-ko="맨 앞 단계인 디헤이즈는 화면 색만으로 뿌연 막의 색과 짙기를 추정합니다. 가까운 바닥과 캐릭터는 짙기가 0이라 건드리지 않습니다." data-en="Dehaze, the first step, estimates the colour and density of the veil from the frame alone. The near ground and the character have zero density and are left untouched.">맨 앞 단계인 디헤이즈는 화면 색만으로 뿌연 막의 색과 짙기를 추정합니다. 가까운 바닥과 캐릭터는 짙기가 0이라 건드리지 않습니다.</p>
     <div class="figs">
@@ -385,6 +404,26 @@
   cmp.addEventListener('pointermove', function (e) { if (dragging) setPos(e.clientX); });
   cmp.addEventListener('pointerup', function () { dragging = false; });
   cmp.addEventListener('pointercancel', function () { dragging = false; });
+
+  // 캐릭터 질감 비교: 왼쪽 = 원본, 오른쪽 = LumiShade, 버튼으로 장면 전환
+  (function () {
+    var c2 = document.getElementById('cmp2'), l2 = document.getElementById('imgL2'), r2 = document.getElementById('imgR2');
+    function setChar(k) {
+      l2.src = 'images/how/' + k + '_before.jpg?v=20261115';
+      r2.src = 'images/how/' + k + '_after.jpg?v=20261115';
+      var tb = document.querySelectorAll('#tabs2 .btn');
+      for (var i = 0; i < tb.length; i++) tb[i].classList.toggle('on', tb[i].dataset.view === k);
+    }
+    var tb2 = document.querySelectorAll('#tabs2 .btn');
+    for (var i = 0; i < tb2.length; i++) tb2[i].addEventListener('click', function () { setChar(this.dataset.view); });
+    setChar('c1');
+    var drag2 = false;
+    function pos2(x) { var r = c2.getBoundingClientRect(); c2.style.setProperty('--pos', Math.min(Math.max((x - r.left) / r.width, 0), 1) * 100 + '%'); }
+    c2.addEventListener('pointerdown', function (e) { drag2 = true; c2.setPointerCapture(e.pointerId); pos2(e.clientX); });
+    c2.addEventListener('pointermove', function (e) { if (drag2) pos2(e.clientX); });
+    c2.addEventListener('pointerup', function () { drag2 = false; });
+    c2.addEventListener('pointercancel', function () { drag2 = false; });
+  })();
 
   // 언어
   function setLang(l) {
