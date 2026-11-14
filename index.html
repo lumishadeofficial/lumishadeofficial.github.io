@@ -71,11 +71,11 @@
   .controls .count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
   .controls .hint { color: var(--muted); font-size: 13px; text-align: center; flex: 1; }
 
-  .tgroups { margin: 22px 0 64px; }
-  .tgh { text-align: center; color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 10px; }
-  .tgh b { color: var(--accent); font-weight: 800; }
-  .thumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 0 24px; }
-  .thumb { position: relative; width: calc((100% - 60px) / 7); aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
+  .tgroups { margin: 26px 0 64px; }
+  .tgh { color: var(--accent); font-size: 15px; font-weight: 800; letter-spacing: .04em; margin: 0 0 8px 4px; }
+  .tbox { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); padding: 14px; margin: 0 0 26px; }
+  .thumbs { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 10px; }
+  .thumb { position: relative; width: calc((100% - 30px) / 4); aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
   .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .65; transition: opacity .15s; }
   .thumb:hover img, .thumb.on img { opacity: 1; }
   .thumb.on { border-color: var(--accent); }
@@ -84,7 +84,7 @@
   section.feat { padding: 8px 0 64px; }
   section.feat h2 { font-size: 26px; margin: 0 0 20px; text-align: center; }
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); grid-auto-rows: 1fr; justify-content: center; gap: 20px; }
-  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 30px) / 4); } }
+  @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 20px) / 3); } }
   @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); grid-auto-rows: auto; } .thumb { width: calc((100% - 10px) / 2); } }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
@@ -177,7 +177,7 @@
 <script>
 (function () {
   var N = 11;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
-  var V = '?v=' + '20261115d';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var V = '?v=' + '20261115e';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -185,18 +185,20 @@
   var count = document.getElementById('count');
   var thumbs = document.getElementById('thumbs');
   var cur = 1;
-  // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면 (화면이 지금과 다름)
+  // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면. 화면에는 버전 이름만 적음
   //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
   var NEW = 1;
-  var VER_NEW = 'v1.2.0', VER_OLD = 'v1.0 ~ v1.1';
+  var VER_NEW = 'v1.2.0', VER_OLD = 'v1.0';
   var tagVer = document.getElementById('tagVer');
 
   // 썸네일 (현재 버전 / 이전 버전 두 묶음)
-  function thumbGroup(from, to, ko, en) {
+  function thumbGroup(from, to, ver) {
     if (from > to) return;
     var hd = document.createElement('div');
     hd.className = 'tgh';
-    hd.setAttribute('data-ko', ko); hd.setAttribute('data-en', en); hd.innerHTML = ko;
+    hd.textContent = ver;
+    var box = document.createElement('div');
+    box.className = 'tbox';
     var row = document.createElement('div');
     row.className = 'thumbs';
     for (var i = from; i <= to; i++) {
@@ -207,11 +209,12 @@
       t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
       row.appendChild(t);
     }
-    thumbs.appendChild(hd); thumbs.appendChild(row);
+    box.appendChild(row);
+    thumbs.appendChild(hd); thumbs.appendChild(box);
   }
   if (N > 1) {
-    thumbGroup(1, NEW, '<b>' + VER_NEW + '</b> · 현재 버전으로 찍은 장면', '<b>' + VER_NEW + '</b> · taken with the current version');
-    thumbGroup(NEW + 1, N, '<b>' + VER_OLD + '</b> · 이전 버전으로 찍은 장면 (지금 버전과 화면이 다릅니다)', '<b>' + VER_OLD + '</b> · taken with earlier versions (the current version looks different)');
+    thumbGroup(1, NEW, VER_NEW);
+    thumbGroup(NEW + 1, N, VER_OLD);
   }
 
   // 장면이 한 장뿐이면 넘기기 버튼, 장면 수, 링크 복사를 감추고 안내 문구에서 장면 넘기기를 뺌 (언어 적용 전에 문구를 바꿔 둠)
