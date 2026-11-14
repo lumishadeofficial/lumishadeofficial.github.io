@@ -47,6 +47,15 @@
   .lic b { display: block; margin-bottom: 4px; }
   .lic span { color: var(--muted); font-size: 14px; line-height: 1.7; }
   .hash { color: var(--muted); font-size: 12px; word-break: break-all; }
+  .log { border-top: 1px solid var(--line); }
+  .log .rel { padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .log .rv b { font-size: 17px; }
+  .log .rel:first-child .rv b { color: var(--accent); }
+  .log .rv span { color: var(--muted); font-size: 13px; margin-left: 10px; }
+  .log ul { margin: 8px 0 0; padding-left: 20px; }
+  .log li { margin-bottom: 2px; }
+  .more { font-size: 14px; margin-top: 14px; }
+  .more a { color: var(--accent); }
   footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
   @media (max-width: 640px) { nav .btn { display: none; } .get { padding: 22px 20px; } .dl { width: 100%; justify-content: center; } }
 </style>
@@ -68,11 +77,11 @@
 
   <div class="get">
     <div>
-      <div class="ver">LumiShade <em>v1.1.0</em></div>
-      <div class="meta" data-ko="2026-11-02 · Windows 10/11 64비트 · ZIP 2.8 MB" data-en="2026-11-02 · Windows 10/11 64-bit · ZIP 2.8 MB">2026-11-02 · Windows 10/11 64비트 · ZIP 2.8 MB</div>
+      <div class="ver">LumiShade <em>v1.2.0</em></div>
+      <div class="meta" data-ko="2026-11-14 · Windows 10/11 64비트 · ZIP 2.8 MB" data-en="2026-11-14 · Windows 10/11 64-bit · ZIP 2.8 MB">2026-11-14 · Windows 10/11 64비트 · ZIP 2.8 MB</div>
       <div class="tag" data-ko="ReShade 6.8.0 포함 통합 패키지 · 포터블 버전 — 무설치" data-en="All-in-one with ReShade 6.8.0 · Portable — no install">포터블 버전 — 무설치</div>
     </div>
-    <a class="dl" href="https://github.com/lumishadeofficial/lumishadeofficial.github.io/releases/download/v1.1.0/LumiShade_v1.1.0.zip" data-ko="LumiShade_v1.1.0.zip 다운로드" data-en="Download LumiShade_v1.1.0.zip">LumiShade_v1.1.0.zip 다운로드</a>
+    <a class="dl" href="https://github.com/lumishadeofficial/lumishadeofficial.github.io/releases/download/v1.2.0/LumiShade_v1.2.0.zip" data-ko="LumiShade_v1.2.0.zip 다운로드" data-en="Download LumiShade_v1.2.0.zip">LumiShade_v1.2.0.zip 다운로드</a>
   </div>
 
   <section class="warn">
@@ -106,13 +115,46 @@
   </section>
 
   <section>
+    <h2 data-ko="업데이트 내역" data-en="Release notes">업데이트 내역</h2>
+    <div class="log">
+      <div class="rel">
+        <div class="rv"><b>v1.2.0</b><span>2026-11-14</span></div>
+        <ul>
+          <li data-ko="ReShade를 새로 설치한 환경에서 컴파일 오류로 효과가 켜지지 않던 문제를 고쳤습니다." data-en="Fixed: the effect failed to compile on fresh ReShade installs.">ReShade를 새로 설치한 환경에서 컴파일 오류로 효과가 켜지지 않던 문제를 고쳤습니다.</li>
+          <li data-ko="디헤이즈 추가: 뿌연 블룸과 원경의 옅은 안개를 걷어 화면이 또렷해집니다." data-en="New dehaze: removes the milky bloom veil and thin distance haze for a clearer image.">디헤이즈 추가: 뿌연 블룸과 원경의 옅은 안개를 걷어 화면이 또렷해집니다.</li>
+          <li data-ko="반사광(SSGI) 재설계: 주변 가림, 반사광, 하늘빛을 한 번에 계산해 빛과 그늘이 더 자연스럽게 이어집니다." data-en="Bounce light (SSGI) redesigned: occlusion, bounce and sky light come from one calculation, so light and shade connect more naturally.">반사광(SSGI) 재설계: 주변 가림, 반사광, 하늘빛을 한 번에 계산해 빛과 그늘이 더 자연스럽게 이어집니다.</li>
+          <li data-ko="캐릭터: 형태 음영 강조, 어두운 재질과 피부의 윤기, 피부의 그늘 경계를 부드럽게, 피부 음영과 피부색 교정." data-en="Characters: stronger form shading, sheen on dark materials and skin, a softer shade edge on skin, corrected skin shading and skin colour.">캐릭터: 형태 음영 강조, 어두운 재질과 피부의 윤기, 피부의 그늘 경계를 부드럽게, 피부 음영과 피부색 교정.</li>
+          <li data-ko="렌즈: 실측 렌즈 데이터 기반의 왜곡, 비네팅, 색수차. 화면 중앙은 픽셀 그대로 유지합니다." data-en="Lens: distortion, vignetting and chromatic aberration from measured lens data; the centre of the screen stays pixel-exact.">렌즈: 실측 렌즈 데이터 기반의 왜곡, 비네팅, 색수차. 화면 중앙은 픽셀 그대로 유지합니다.</li>
+          <li data-ko="조명과 톤: 광택 있는 재질 구분, 어두운 재질과 그늘 구분, 어두운 장면의 대비 조정, 발광체 보존." data-en="Lighting and tone: glossy materials told apart, dark materials told apart from shade, contrast in dark scenes, emissive surfaces kept.">조명과 톤: 광택 있는 재질 구분, 어두운 재질과 그늘 구분, 어두운 장면의 대비 조정, 발광체 보존.</li>
+          <li data-ko="먼 바다의 가로 띠, 풀숲 얼룩, 카메라를 움직일 때의 잔상 등 여러 문제를 고쳤습니다." data-en="Fixes for the band on the distant sea, foliage mottling, ghosting while the camera moves, and more.">먼 바다의 가로 띠, 풀숲 얼룩, 카메라를 움직일 때의 잔상 등 여러 문제를 고쳤습니다.</li>
+        </ul>
+      </div>
+      <div class="rel">
+        <div class="rv"><b>v1.1.0</b><span>2026-11-02</span></div>
+        <ul>
+          <li data-ko="화면 공간 라이트맵 추가: 모든 조명 효과가 장면의 실제 빛(방향과 색)을 따라갑니다." data-en="New screen-space lightmap: every lighting effect follows the scene’s real light (direction and colour).">화면 공간 라이트맵 추가: 모든 조명 효과가 장면의 실제 빛(방향과 색)을 따라갑니다.</li>
+          <li data-ko="빛 웅덩이, 횃불 빛무리, 부드럽게 이어지는 그림자 경계." data-en="Light pools, torch glow and softer, connected shadow edges.">빛 웅덩이, 횃불 빛무리, 부드럽게 이어지는 그림자 경계.</li>
+          <li data-ko="에어라이트, 아나모픽 스트릭, 비네트 재조정." data-en="AirLight, anamorphic streaks and vignette retuned.">에어라이트, 아나모픽 스트릭, 비네트 재조정.</li>
+        </ul>
+      </div>
+      <div class="rel">
+        <div class="rv"><b>v1.0.0</b><span>2026-10-31</span></div>
+        <ul>
+          <li data-ko="첫 공개." data-en="First public release.">첫 공개.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="more"><a href="https://github.com/lumishadeofficial/lumishadeofficial.github.io/releases" data-ko="전체 내역과 이전 버전" data-en="Full notes and earlier versions">전체 내역과 이전 버전</a></p>
+  </section>
+
+  <section>
     <h2 data-ko="저작권 · 라이선스" data-en="Credits &amp; licences">저작권 · 라이선스</h2>
     <div class="lic">
       <div><b>ReShade 6.8.0 (애드온 지원판 / add-on build)</b><span data-ko="© crosire (Patrick Mours) — <a href=&quot;https://reshade.me&quot;>reshade.me</a>. 패키지에 들어 있는 <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code>, <code>ReShadeUI.fxh</code>는 ReShade의 일부이며, BSD 3-Clause 라이선스에 따라 수정 없이 함께 배포합니다. 라이선스 전문은 <code>ReShade_LICENSE.txt</code>에 있습니다." data-en="© crosire (Patrick Mours) — <a href=&quot;https://reshade.me&quot;>reshade.me</a>. <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code> and <code>ReShadeUI.fxh</code> are part of ReShade and are redistributed unmodified under its BSD 3-Clause licence. The full text is in <code>ReShade_LICENSE.txt</code>.">© crosire (Patrick Mours) — <a href="https://reshade.me">reshade.me</a>. 패키지에 들어 있는 <code>ReShade64.dll</code>, <code>inject64.exe</code>, <code>ReShade.fxh</code>, <code>ReShadeUI.fxh</code>는 ReShade의 일부이며, BSD 3-Clause 라이선스에 따라 수정 없이 함께 배포합니다. 라이선스 전문은 <code>ReShade_LICENSE.txt</code>에 있습니다.</span></div>
       <div><b>ReShade Effect Shader Toggler (REST)</b><span data-ko="UI보다 먼저 효과를 적용하기 위해 쓰는 ReShade 애드온입니다. 라이선스는 <code>REST_LICENSE.txt</code>에 있습니다." data-en="A ReShade add-on used to apply the effect before the game UI. Its licence is in <code>REST_LICENSE.txt</code>.">UI보다 먼저 효과를 적용하기 위해 쓰는 ReShade 애드온입니다. 라이선스는 <code>REST_LICENSE.txt</code>에 있습니다.</span></div>
       <div><b>Genshin Impact</b><span data-ko="© HoYoverse. 게임과 관련된 모든 콘텐츠의 권리는 HoYoverse에 있습니다." data-en="© HoYoverse. All game content belongs to HoYoverse.">© HoYoverse. 게임과 관련된 모든 콘텐츠의 권리는 HoYoverse에 있습니다.</span></div>
     </div>
-    <p class="hash">SHA-256 (LumiShade_v1.1.0.zip): d869915955f3b056992ba7706e7a576ea2bba6e9bd63ee8578ddbc38a12fee91</p>
+    <p class="hash">SHA-256 (LumiShade_v1.2.0.zip): c679973202e5373e6bea016b5ccffc440117a322c6dfd9f88210221a3d21861b</p>
   </section>
 </main>
 
