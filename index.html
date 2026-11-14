@@ -39,7 +39,7 @@
   .lang button.on { color: var(--text); font-weight: 600; }
 
   /* 배너: 일러스트의 넓은 흰 여백(왼쪽 약 55%)을 왼쪽부터 천천히 페이지 배경색으로 어둡게 → 오른쪽 루미네는 그대로 */
-  .hero { position: relative; margin-top: 24px; min-height: clamp(400px, 44vw, 640px); border-radius: 18px; overflow: hidden; display: flex; align-items: center; background: #0f121a; }
+  .hero { position: relative; margin-top: 24px; min-height: clamp(400px, 44vw, 640px); border-radius: 6px; overflow: hidden; display: flex; align-items: center; background: #0f121a; }
   .hero .art { position: absolute; inset: 0; }
   .hero .art img { width: 100%; height: 100%; object-fit: cover; object-position: right top; display: block; }
   .hero .art::after { content: ""; position: absolute; inset: 0;
@@ -56,7 +56,7 @@
 
   /* 비교 슬라이더 */
   .viewer { margin: 28px 0 12px; }
-  .cmp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; background: #000; user-select: none; touch-action: pan-y; cursor: ew-resize; box-shadow: 0 20px 60px rgba(0,0,0,.5); outline: none; }
+  .cmp { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 6px; background: #000; user-select: none; touch-action: pan-y; cursor: ew-resize; box-shadow: 0 20px 60px rgba(0,0,0,.5); outline: none; }
   .cmp img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; display: block; }
   .cmp .before { clip-path: inset(0 calc(100% - var(--pos, 50%)) 0 0); }
   .cmp .bar { position: absolute; top: 0; bottom: 0; left: var(--pos, 50%); width: 2px; background: #fff; transform: translateX(-1px); box-shadow: 0 0 12px rgba(0,0,0,.6); }
@@ -86,7 +86,7 @@
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); grid-auto-rows: 1fr; justify-content: center; gap: 20px; }
   @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 30px) / 4); } }
   @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); grid-auto-rows: auto; } .thumb { width: calc((100% - 10px) / 2); } }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
   .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
 
@@ -136,7 +136,7 @@
     <div class="controls">
       <button class="btn" id="prev" aria-label="previous">←</button>
       <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
-      <span class="count" id="count">1 / 11</span>
+      <span class="count" id="count">1 / 38</span>
       <button class="btn" id="next" aria-label="next">→</button>
       <button class="btn" id="copyLink" data-ko="링크 복사" data-en="Copy link">링크 복사</button>
     </div>
@@ -176,8 +176,8 @@
 
 <script>
 (function () {
-  var N = 11;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
-  var V = '?v=' + '20261115e';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var N = 38;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
+  var V = '?v=' + '20261115f';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
