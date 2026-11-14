@@ -189,7 +189,8 @@
   //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
   var NEW = 1;
   var VER_NEW = 'v1.2.0';
-  var OLD_KO = 'Old version', OLD_EN = 'Old version';   // 이전 장면은 버전을 하나하나 적지 않고 한 묶음으로
+  var VER_OLD = 'v1.0';            // 이전 장면을 찍은 버전: 장면을 열었을 때 화면 위에 표시
+  var OLD_GROUP = 'Old version';   // 썸네일 묶음 이름: 이전 장면은 버전을 하나하나 적지 않고 한 묶음으로
   var tagVer = document.getElementById('tagVer');
 
   // 썸네일 (현재 버전 / 이전 버전 두 묶음)
@@ -215,7 +216,7 @@
   }
   if (N > 1) {
     thumbGroup(1, NEW, VER_NEW, VER_NEW);
-    thumbGroup(NEW + 1, N, OLD_KO, OLD_EN);
+    thumbGroup(NEW + 1, N, OLD_GROUP, OLD_GROUP);
   }
 
   // 장면이 한 장뿐이면 넘기기 버튼, 장면 수, 링크 복사를 감추고 안내 문구에서 장면 넘기기를 뺌 (언어 적용 전에 문구를 바꿔 둠)
@@ -249,9 +250,8 @@
     a.src = 'images/' + pad(cur) + '_after.jpg' + V;
     b.src = 'images/' + pad(cur) + '_before.jpg' + V;
     count.textContent = cur + ' / ' + N;
-    var tk2 = 'LumiShade ' + (cur <= NEW ? VER_NEW : '· ' + OLD_KO), te2 = 'LumiShade ' + (cur <= NEW ? VER_NEW : '· ' + OLD_EN);
-    tagVer.setAttribute('data-ko', tk2); tagVer.setAttribute('data-en', te2);
-    tagVer.textContent = document.documentElement.lang === 'en' ? te2 : tk2;
+    tagVer.removeAttribute('data-ko'); tagVer.removeAttribute('data-en');
+    tagVer.textContent = 'LumiShade ' + (cur <= NEW ? VER_NEW : VER_OLD);
     if (location.hash || cur !== 1) history.replaceState(null, '', '#scene-' + cur);   // 주소창에 지금 장면 (그대로 복사해 공유 가능)
     var all = thumbs.querySelectorAll('.thumb');
     for (var k = 0; k < all.length; k++) all[k].classList.toggle('on', +all[k].dataset.i === cur);
