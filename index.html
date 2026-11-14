@@ -80,9 +80,9 @@
 
   section.feat { padding: 8px 0 64px; }
   section.feat h2 { font-size: 26px; margin: 0 0 20px; text-align: center; }
-  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); justify-content: center; gap: 20px; }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); grid-auto-rows: 1fr; justify-content: center; gap: 20px; }
   @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 30px) / 4); } }
-  @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); } .thumb { width: calc((100% - 10px) / 2); } }
+  @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); grid-auto-rows: auto; } .thumb { width: calc((100% - 10px) / 2); } }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
   .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
