@@ -133,8 +133,9 @@
       <div class="tag r">LumiShade v1.2.0</div>
     </div>
     <div class="tabs" id="tabs2">
-      <button class="btn" data-view="c1" data-ko="정면 · 밤" data-en="Front · night">정면 · 밤</button>
-      <button class="btn" data-view="c2" data-ko="정면 · 낮" data-en="Front · day">정면 · 낮</button>
+      <button class="btn" data-view="c1" data-ko="얼굴 · 상체" data-en="Face · upper body">얼굴 · 상체</button>
+      <button class="btn" data-view="c4" data-ko="옷 · 장식" data-en="Clothing · ornaments">옷 · 장식</button>
+      <button class="btn" data-view="c2" data-ko="정면" data-en="Front">정면</button>
       <button class="btn" data-view="c3" data-ko="뒷모습 · 머리카락" data-en="Back · hair">뒷모습 · 머리카락</button>
     </div>
     <p class="note" data-ko="화면을 줄이지 않고 캐릭터 주변을 원본 픽셀 그대로 잘라 낸 것입니다(4K 기준). 머리카락 다발 사이, 목과 쇄골 아래, 옷의 겹친 곳과 장식의 테두리를 비교해 보세요." data-en="These are cut from around the character at native pixels, not scaled (from 4K). Compare between locks of hair, under the neck and collarbone, where clothing overlaps and along the edges of ornaments.">화면을 줄이지 않고 캐릭터 주변을 원본 픽셀 그대로 잘라 낸 것입니다(4K 기준). 머리카락 다발 사이, 목과 쇄골 아래, 옷의 겹친 곳과 장식의 테두리를 비교해 보세요.</p>
@@ -408,8 +409,8 @@
   (function () {
     var c2 = document.getElementById('cmp2'), l2 = document.getElementById('imgL2'), r2 = document.getElementById('imgR2');
     function setChar(k) {
-      l2.src = 'images/how/' + k + '_before.jpg?v=20261115c';
-      r2.src = 'images/how/' + k + '_after.jpg?v=20261115c';
+      l2.src = 'images/how/' + k + '_before.jpg?v=20261115b';
+      r2.src = 'images/how/' + k + '_after.jpg?v=20261115b';
       var tb = document.querySelectorAll('#tabs2 .btn');
       for (var i = 0; i < tb.length; i++) tb[i].classList.toggle('on', tb[i].dataset.view === k);
     }
