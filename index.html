@@ -136,7 +136,7 @@
     <div class="controls">
       <button class="btn" id="prev" aria-label="previous">←</button>
       <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
-      <span class="count" id="count">1 / 38</span>
+      <span class="count" id="count">1 / 45</span>
       <button class="btn" id="next" aria-label="next">→</button>
       <button class="btn" id="copyLink" data-ko="링크 복사" data-en="Copy link">링크 복사</button>
     </div>
@@ -153,7 +153,7 @@
       <div class="card"><h3 data-ko="형태와 깊이" data-en="Form &amp; depth">형태와 깊이</h3>
         <p data-ko="깊이 버퍼에서 면의 방향을 읽고, 화면을 '빛 × 재질'로 나눈 라이트맵으로 실제 빛의 방향과 색을 추정합니다. 그 위에 형태 음영과 SSAO를 더해 평평한 툰 면에 입체감을 줍니다." data-en="Reads surface direction from the depth buffer and estimates the real light's direction and colour from a lightmap that splits the frame into light × material. Form shading and SSAO on top give flat toon surfaces volume.">깊이 버퍼에서 면의 방향을 읽고, 화면을 '빛 × 재질'로 나눈 라이트맵으로 실제 빛의 방향과 색을 추정합니다. 그 위에 형태 음영과 SSAO를 더해 평평한 툰 면에 입체감을 줍니다.</p></div>
       <div class="card"><h3 data-ko="반사광 (SSGI)" data-en="Bounce light (SSGI)">반사광 (SSGI)</h3>
-        <p data-ko="한 번의 지평선 추적으로 주변 가림, 면에서 튀어 온 반사광, 하늘빛을 함께 구합니다. 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다." data-en="One horizon march yields occlusion, light bounced from nearby surfaces and sky light together, so shade carries the colour of its surroundings instead of one flat tone.">한 번의 지평선 추적으로 주변 가림, 면에서 튀어 온 반사광, 하늘빛을 함께 구합니다. 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다.</p></div>
+        <p data-ko="빛이 면에 닿은 뒤 다시 튀어 주변의 그늘을 밝히는 간접광을, 레이트레이싱 없이 화면 정보만으로 근사합니다. 밝은 면 옆의 그늘은 그 색을 머금고, 막힌 구석은 가라앉고, 열린 그늘에는 하늘빛이 섞여 그늘만으로 공간이 읽힙니다." data-en="Approximates indirect light, the light that bounces off a surface and lights nearby shade, from the frame alone and without ray tracing. Shade beside a bright surface takes its colour, enclosed corners settle and open shade picks up sky light, so space can be read from shade.">빛이 면에 닿은 뒤 다시 튀어 주변의 그늘을 밝히는 간접광을, 레이트레이싱 없이 화면 정보만으로 근사합니다. 밝은 면 옆의 그늘은 그 색을 머금고, 막힌 구석은 가라앉고, 열린 그늘에는 하늘빛이 섞여 그늘만으로 공간이 읽힙니다.</p></div>
       <div class="card"><h3 data-ko="공기와 빛" data-en="Air &amp; light">공기와 빛</h3>
         <p data-ko="화면 안의 실제 광원을 찾아 공기 중 산란, 빛기둥, 바닥에 맺히는 반사를 만듭니다. 광원이 뚜렷한 장면에서만 켜지고 화창한 낮에는 저절로 꺼집니다." data-en="Finds the real light sources on screen and creates in-air scattering, light shafts and a reflection on the floor. It turns on only where a source stands out and switches itself off on a bright day.">화면 안의 실제 광원을 찾아 공기 중 산란, 빛기둥, 바닥에 맺히는 반사를 만듭니다. 광원이 뚜렷한 장면에서만 켜지고 화창한 낮에는 저절로 꺼집니다.</p></div>
       <div class="card"><h3 data-ko="어둠의 표현" data-en="Darkness">어둠의 표현</h3>
@@ -176,8 +176,8 @@
 
 <script>
 (function () {
-  var N = 38;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
-  var V = '?v=' + '20261115f';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var N = 45;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
+  var V = '?v=' + '20261115g';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -187,7 +187,7 @@
   var cur = 1;
   // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면. 화면에는 버전 이름만 적음
   //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
-  var NEW = 1;
+  var NEW = 8;
   var VER_NEW = 'v1.2.0';
   var VER_OLD = 'v1.0';            // 이전 장면을 찍은 버전: 장면을 열었을 때 화면 위에 표시
   var OLD_GROUP = 'Old version';   // 썸네일 묶음 이름: 이전 장면은 버전을 하나하나 적지 않고 한 묶음으로
