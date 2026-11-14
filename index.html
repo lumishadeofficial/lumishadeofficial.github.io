@@ -143,18 +143,24 @@
   <section class="feat">
     <h2 data-ko="시각 효과" data-en="Visual effects">시각 효과</h2>
     <div class="grid">
+      <div class="card"><h3 data-ko="디헤이즈" data-en="Dehaze">디헤이즈</h3>
+        <p data-ko="화면 색만으로 뿌연 블룸과 원경 안개의 색과 짙기를 추정해 걷어 냅니다. 가까운 캐릭터는 건드리지 않고, 피사체와 원경이 또렷해집니다." data-en="Estimates the colour and density of the milky bloom and distance haze from the frame alone and lifts them. Near characters are untouched; subjects and the distance read clearly.">화면 색만으로 뿌연 블룸과 원경 안개의 색과 짙기를 추정해 걷어 냅니다. 가까운 캐릭터는 건드리지 않고, 피사체와 원경이 또렷해집니다.</p></div>
+      <div class="card"><h3 data-ko="색 보정" data-en="Colour grade">색 보정</h3>
+        <p data-ko="여러 장면을 기준으로 직접 만든 3D LUT로 원신 특유의 보라·회색 톤을 교정합니다. 그늘의 밝기, 원경의 공기감, 피부색은 따로 지킵니다." data-en="A 3D LUT built against many scenes corrects Genshin's purple-grey tone, while shadow brightness, the air in the distance and skin colour are protected separately.">여러 장면을 기준으로 직접 만든 3D LUT로 원신 특유의 보라·회색 톤을 교정합니다. 그늘의 밝기, 원경의 공기감, 피부색은 따로 지킵니다.</p></div>
       <div class="card"><h3 data-ko="형태와 깊이" data-en="Form &amp; depth">형태와 깊이</h3>
-        <p data-ko="깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다." data-en="Reads surface direction and occlusion from the depth buffer, adding soft form shading and contact shadows to flat toon surfaces.">깊이 버퍼로 면의 방향과 가림을 읽어, 툰 렌더링의 평평한 면에 부드러운 형태 음영과 접촉 그림자를 더합니다.</p></div>
-      <div class="card"><h3 data-ko="반사광" data-en="Bounce light">반사광</h3>
-        <p data-ko="햇빛 받은 면이 옆 그늘을 은은하게 채워, 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다." data-en="Sunlit surfaces gently fill nearby shade, so shadows carry the colour of their surroundings instead of one flat tone.">햇빛 받은 면이 옆 그늘을 은은하게 채워, 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다.</p></div>
+        <p data-ko="깊이 버퍼에서 면의 방향을 읽고, 화면을 '빛 × 재질'로 나눈 라이트맵으로 실제 빛의 방향과 색을 추정합니다. 그 위에 형태 음영과 SSAO를 더해 평평한 툰 면에 입체감을 줍니다." data-en="Reads surface direction from the depth buffer and estimates the real light's direction and colour from a lightmap that splits the frame into light × material. Form shading and SSAO on top give flat toon surfaces volume.">깊이 버퍼에서 면의 방향을 읽고, 화면을 '빛 × 재질'로 나눈 라이트맵으로 실제 빛의 방향과 색을 추정합니다. 그 위에 형태 음영과 SSAO를 더해 평평한 툰 면에 입체감을 줍니다.</p></div>
+      <div class="card"><h3 data-ko="반사광 (SSGI)" data-en="Bounce light (SSGI)">반사광 (SSGI)</h3>
+        <p data-ko="한 번의 지평선 추적으로 주변 가림, 면에서 튀어 온 반사광, 하늘빛을 함께 구합니다. 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다." data-en="One horizon march yields occlusion, light bounced from nearby surfaces and sky light together, so shade carries the colour of its surroundings instead of one flat tone.">한 번의 지평선 추적으로 주변 가림, 면에서 튀어 온 반사광, 하늘빛을 함께 구합니다. 그늘이 한 톤으로 뭉치지 않고 주변 색을 머금습니다.</p></div>
       <div class="card"><h3 data-ko="공기와 빛" data-en="Air &amp; light">공기와 빛</h3>
-        <p data-ko="등불, 창, 역광을 찾아 공기 중 산란과 빛기둥을 만들고, 광원 색이 둘레 면에 스며들게 합니다." data-en="Finds lamps, windows and backlight to create in-air scattering and light shafts, letting the light's colour fall on nearby surfaces.">등불, 창, 역광을 찾아 공기 중 산란과 빛기둥을 만들고, 광원 색이 둘레 면에 스며들게 합니다.</p></div>
+        <p data-ko="화면 안의 실제 광원을 찾아 공기 중 산란, 빛기둥, 바닥에 맺히는 반사를 만듭니다. 광원이 뚜렷한 장면에서만 켜지고 화창한 낮에는 저절로 꺼집니다." data-en="Finds the real light sources on screen and creates in-air scattering, light shafts and a reflection on the floor. It turns on only where a source stands out and switches itself off on a bright day.">화면 안의 실제 광원을 찾아 공기 중 산란, 빛기둥, 바닥에 맺히는 반사를 만듭니다. 광원이 뚜렷한 장면에서만 켜지고 화창한 낮에는 저절로 꺼집니다.</p></div>
       <div class="card"><h3 data-ko="어둠의 표현" data-en="Darkness">어둠의 표현</h3>
         <p data-ko="장면 노출을 따라 어두운 곳일수록 빛과 그늘을 더 분리해, 밤과 실내가 '어둡게 한 낮'이 아닌 빛이 있는 공간으로 보입니다." data-en="Following scene exposure, dark scenes separate light from shade, so nights and interiors read as lit spaces rather than darkened daylight.">장면 노출을 따라 어두운 곳일수록 빛과 그늘을 더 분리해, 밤과 실내가 '어둡게 한 낮'이 아닌 빛이 있는 공간으로 보입니다.</p></div>
       <div class="card"><h3 data-ko="렌즈" data-en="Lens">렌즈</h3>
         <p data-ko="원신의 화각과 같은 실제 28mm 렌즈(Nikon AF-S 28mm f/1.8G)를 측정한 왜곡, 색수차, 주변 광량 저하를 화면에 그대로 옮기는 광학 시뮬레이션입니다. 조리개가 장면 밝기를 따라 움직이고, 광원에서는 아나모픽 플레어가 뻗습니다." data-en="An optical simulation that applies the measured distortion, chromatic aberration and vignetting of a real 28 mm lens matching Genshin's field of view (Nikon AF-S 28mm f/1.8G). The aperture follows scene brightness, and light sources throw anamorphic streaks.">원신의 화각과 같은 실제 28mm 렌즈(Nikon AF-S 28mm f/1.8G)를 측정한 왜곡, 색수차, 주변 광량 저하를 화면에 그대로 옮기는 광학 시뮬레이션입니다. 조리개가 장면 밝기를 따라 움직이고, 광원에서는 아나모픽 플레어가 뻗습니다.</p></div>
+      <div class="card"><h3 data-ko="필름" data-en="Film">필름</h3>
+        <p data-ko="필름의 은 알갱이가 현상되는 과정을 흉내 낸 입자입니다. 그늘과 어두운 장면에만 맺히고, 장면이 어두울수록 감도를 올리는 자동 ISO를 시뮬레이션합니다. 캐릭터는 깨끗하게 남깁니다." data-en="Grain that imitates how silver grains develop on film. It settles only in shade and dark scenes, with a simulated auto ISO that raises sensitivity as the scene darkens, and it leaves the character clean.">필름의 은 알갱이가 현상되는 과정을 흉내 낸 입자입니다. 그늘과 어두운 장면에만 맺히고, 장면이 어두울수록 감도를 올리는 자동 ISO를 시뮬레이션합니다. 캐릭터는 깨끗하게 남깁니다.</p></div>
       <div class="card"><h3 data-ko="안정성" data-en="Stability">안정성</h3>
-        <p data-ko="컷 전환, 메뉴, 깊이가 비는 프레임을 감지해 효과가 깜빡이지 않고, 모든 장면 전환이 부드럽게 이어집니다." data-en="Detects cuts, menus and empty depth frames so effects never flicker, and every scene change blends smoothly.">컷 전환, 메뉴, 깊이가 비는 프레임을 감지해 효과가 깜빡이지 않고, 모든 장면 전환이 부드럽게 이어집니다.</p></div>
+        <p data-ko="깊이 방향을 스스로 맞추고, 컷 전환·메뉴·깊이가 비는 프레임·카메라의 움직임을 감지합니다. 효과가 깜빡이거나 잔상을 남기지 않고 모든 장면 전환이 부드럽게 이어집니다." data-en="Sets the depth orientation by itself and detects cuts, menus, empty-depth frames and camera motion, so effects never flicker or ghost and every scene change blends smoothly.">깊이 방향을 스스로 맞추고, 컷 전환·메뉴·깊이가 비는 프레임·카메라의 움직임을 감지합니다. 효과가 깜빡이거나 잔상을 남기지 않고 모든 장면 전환이 부드럽게 이어집니다.</p></div>
     </div>
   </section>
 </main>
