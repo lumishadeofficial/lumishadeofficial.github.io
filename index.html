@@ -133,7 +133,7 @@
     <div class="controls">
       <button class="btn" id="prev" aria-label="previous">←</button>
       <div class="hint" data-ko="가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기" data-en="Drag the bar to compare · ← → to change scene">가운데 막대를 좌우로 끌어 비교하세요 · ← → 키로 장면 넘기기</div>
-      <span class="count" id="count">1 / 37</span>
+      <span class="count" id="count">1 / 1</span>
       <button class="btn" id="next" aria-label="next">→</button>
       <button class="btn" id="copyLink" data-ko="링크 복사" data-en="Copy link">링크 복사</button>
     </div>
@@ -167,8 +167,8 @@
 
 <script>
 (function () {
-  var N = 37;
-  var V = '?v=' + '20261101e';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var N = 1;    // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
+  var V = '?v=' + '20261115a';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -178,13 +178,22 @@
   var cur = 1;
 
   // 썸네일
-  for (var i = 1; i <= N; i++) {
+  for (var i = 1; i <= N && N > 1; i++) {
     var t = document.createElement('button');
     t.className = 'thumb';
     t.dataset.i = i;
     t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg' + V + '" alt="' + i + '"><span>' + i + '</span>';
     t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
     thumbs.appendChild(t);
+  }
+
+  // 장면이 한 장뿐이면 넘기기 버튼, 장면 수, 링크 복사를 감추고 안내 문구에서 장면 넘기기를 뺌 (언어 적용 전에 문구를 바꿔 둠)
+  if (N === 1) {
+    var hideIds = ['prev', 'next', 'count', 'copyLink'];
+    for (var h = 0; h < hideIds.length; h++) document.getElementById(hideIds[h]).style.display = 'none';
+    var hint = document.querySelector('.controls .hint');
+    hint.setAttribute('data-ko', '가운데 막대를 좌우로 끌어 비교하세요');
+    hint.setAttribute('data-en', 'Drag the bar to compare');
   }
 
   function preload(i) {
