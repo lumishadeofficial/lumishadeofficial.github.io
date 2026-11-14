@@ -71,7 +71,10 @@
   .controls .count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
   .controls .hint { color: var(--muted); font-size: 13px; text-align: center; flex: 1; }
 
-  .thumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 22px 0 64px; }
+  .tgroups { margin: 22px 0 64px; }
+  .tgh { text-align: center; color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .04em; margin: 0 0 10px; }
+  .tgh b { color: var(--accent); font-weight: 800; }
+  .thumbs { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 0 0 24px; }
   .thumb { position: relative; width: calc((100% - 60px) / 7); aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; padding: 0; background: #000; }
   .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .65; transition: opacity .15s; }
   .thumb:hover img, .thumb.on img { opacity: 1; }
@@ -127,7 +130,7 @@
       <img class="before" id="imgBefore" alt="Original">
       <div class="bar"><div class="knob">⇆</div></div>
       <div class="tag l" data-ko="원본" data-en="Original">원본</div>
-      <div class="tag r">LumiShade</div>
+      <div class="tag r" id="tagVer">LumiShade</div>
       <div class="loading" data-ko="불러오는 중…" data-en="Loading…">불러오는 중…</div>
     </div>
     <div class="controls">
@@ -137,7 +140,7 @@
       <button class="btn" id="next" aria-label="next">→</button>
       <button class="btn" id="copyLink" data-ko="링크 복사" data-en="Copy link">링크 복사</button>
     </div>
-    <div class="thumbs" id="thumbs"></div>
+    <div class="tgroups" id="thumbs"></div>
   </section>
 
   <section class="feat">
@@ -174,7 +177,7 @@
 <script>
 (function () {
   var N = 11;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
-  var V = '?v=' + '20261115c';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var V = '?v=' + '20261115d';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -182,15 +185,33 @@
   var count = document.getElementById('count');
   var thumbs = document.getElementById('thumbs');
   var cur = 1;
+  // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면 (화면이 지금과 다름)
+  //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
+  var NEW = 1;
+  var VER_NEW = 'v1.2.0', VER_OLD = 'v1.0 ~ v1.1';
+  var tagVer = document.getElementById('tagVer');
 
-  // 썸네일
-  for (var i = 1; i <= N && N > 1; i++) {
-    var t = document.createElement('button');
-    t.className = 'thumb';
-    t.dataset.i = i;
-    t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg' + V + '" alt="' + i + '"><span>' + i + '</span>';
-    t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
-    thumbs.appendChild(t);
+  // 썸네일 (현재 버전 / 이전 버전 두 묶음)
+  function thumbGroup(from, to, ko, en) {
+    if (from > to) return;
+    var hd = document.createElement('div');
+    hd.className = 'tgh';
+    hd.setAttribute('data-ko', ko); hd.setAttribute('data-en', en); hd.innerHTML = ko;
+    var row = document.createElement('div');
+    row.className = 'thumbs';
+    for (var i = from; i <= to; i++) {
+      var t = document.createElement('button');
+      t.className = 'thumb';
+      t.dataset.i = i;
+      t.innerHTML = '<img loading="lazy" src="images/thumbs/' + pad(i) + '_after.jpg' + V + '" alt="' + i + '"><span>' + i + '</span>';
+      t.addEventListener('click', function () { show(+this.dataset.i); cmp.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+      row.appendChild(t);
+    }
+    thumbs.appendChild(hd); thumbs.appendChild(row);
+  }
+  if (N > 1) {
+    thumbGroup(1, NEW, '<b>' + VER_NEW + '</b> · 현재 버전으로 찍은 장면', '<b>' + VER_NEW + '</b> · taken with the current version');
+    thumbGroup(NEW + 1, N, '<b>' + VER_OLD + '</b> · 이전 버전으로 찍은 장면 (지금 버전과 화면이 다릅니다)', '<b>' + VER_OLD + '</b> · taken with earlier versions (the current version looks different)');
   }
 
   // 장면이 한 장뿐이면 넘기기 버튼, 장면 수, 링크 복사를 감추고 안내 문구에서 장면 넘기기를 뺌 (언어 적용 전에 문구를 바꿔 둠)
@@ -224,8 +245,9 @@
     a.src = 'images/' + pad(cur) + '_after.jpg' + V;
     b.src = 'images/' + pad(cur) + '_before.jpg' + V;
     count.textContent = cur + ' / ' + N;
+    tagVer.textContent = 'LumiShade ' + (cur <= NEW ? VER_NEW : VER_OLD);
     if (location.hash || cur !== 1) history.replaceState(null, '', '#scene-' + cur);   // 주소창에 지금 장면 (그대로 복사해 공유 가능)
-    var all = thumbs.children;
+    var all = thumbs.querySelectorAll('.thumb');
     for (var k = 0; k < all.length; k++) all[k].classList.toggle('on', +all[k].dataset.i === cur);
     preload(cur + 1); preload(cur - 1);
   }
