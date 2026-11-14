@@ -188,15 +188,16 @@
   // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면. 화면에는 버전 이름만 적음
   //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
   var NEW = 1;
-  var VER_NEW = 'v1.2.0', VER_OLD = 'v1.0';
+  var VER_NEW = 'v1.2.0';
+  var OLD_KO = '올드 버전', OLD_EN = 'Old version';   // 이전 장면은 버전을 하나하나 적지 않고 한 묶음으로
   var tagVer = document.getElementById('tagVer');
 
   // 썸네일 (현재 버전 / 이전 버전 두 묶음)
-  function thumbGroup(from, to, ver) {
+  function thumbGroup(from, to, ko, en) {
     if (from > to) return;
     var hd = document.createElement('div');
     hd.className = 'tgh';
-    hd.textContent = ver;
+    hd.setAttribute('data-ko', ko); hd.setAttribute('data-en', en); hd.textContent = ko;
     var box = document.createElement('div');
     box.className = 'tbox';
     var row = document.createElement('div');
@@ -213,8 +214,8 @@
     thumbs.appendChild(hd); thumbs.appendChild(box);
   }
   if (N > 1) {
-    thumbGroup(1, NEW, VER_NEW);
-    thumbGroup(NEW + 1, N, VER_OLD);
+    thumbGroup(1, NEW, VER_NEW, VER_NEW);
+    thumbGroup(NEW + 1, N, OLD_KO, OLD_EN);
   }
 
   // 장면이 한 장뿐이면 넘기기 버튼, 장면 수, 링크 복사를 감추고 안내 문구에서 장면 넘기기를 뺌 (언어 적용 전에 문구를 바꿔 둠)
@@ -248,7 +249,9 @@
     a.src = 'images/' + pad(cur) + '_after.jpg' + V;
     b.src = 'images/' + pad(cur) + '_before.jpg' + V;
     count.textContent = cur + ' / ' + N;
-    tagVer.textContent = 'LumiShade ' + (cur <= NEW ? VER_NEW : VER_OLD);
+    var tk2 = 'LumiShade ' + (cur <= NEW ? VER_NEW : '· ' + OLD_KO), te2 = 'LumiShade ' + (cur <= NEW ? VER_NEW : '· ' + OLD_EN);
+    tagVer.setAttribute('data-ko', tk2); tagVer.setAttribute('data-en', te2);
+    tagVer.textContent = document.documentElement.lang === 'en' ? te2 : tk2;
     if (location.hash || cur !== 1) history.replaceState(null, '', '#scene-' + cur);   // 주소창에 지금 장면 (그대로 복사해 공유 가능)
     var all = thumbs.querySelectorAll('.thumb');
     for (var k = 0; k < all.length; k++) all[k].classList.toggle('on', +all[k].dataset.i === cur);
