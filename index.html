@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LumiShade (루미쉐이드) — 원신 리쉐이드 셰이더 팩 | ReShade shader pack for Genshin Impact</title>
 <meta name="description" content="LumiShade(루미쉐이드)는 원신(Genshin Impact) 전용으로 만든 ReShade 셰이더 팩입니다. 디헤이즈, SSAO, SSGI 반사광, 공기 빛, 실측 28mm 렌즈, 필름 입자. 무설치 통합 패키지. A ReShade shader pack built for Genshin Impact: dehaze, SSAO, SSGI bounce light, air light, a measured 28 mm lens and film grain, in a portable all-in-one package.">
-<meta name="keywords" content="LumiShade, 루미쉐이드, 루미셰이드, 원신, Genshin Impact, Genshin, 원신 리쉐이드, 원신 셰이더, 원신 그래픽 모드, 원신 모드, Genshin Impact ReShade, Genshin ReShade shader, Genshin graphics mod, ReShade, 리쉐이드, SSGI, SSAO, 호요버스, HoYoverse, 미호요, miHoYo">
+<meta name="keywords" content="LumiShade, 루미쉐이드, 루미셰이드, 원신, Genshin Impact, Genshin, 원신 리쉐이드, 원신 셰이더, 원신 그래픽 모드, 원신 모드, Genshin Impact ReShade, Genshin ReShade shader, Genshin graphics mod, ReShade, 리쉐이드, SSGI, SSAO, 호요버스, HoYoverse, 미호요, miHoYo, 티바트, Teyvat, 몬드, Mondstadt, 리월, Liyue, 이나즈마, Inazuma, 수메르, Sumeru, 폰타인, Fontaine, 나타, Natlan, 노드크라이, Nod-Krai, 스네즈나야, Snezhnaya">
 <link rel="canonical" href="https://lumishadeofficial.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="LumiShade">
@@ -93,6 +93,7 @@
   .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 376px)); grid-auto-rows: 1fr; justify-content: center; gap: 20px; }
   @media (max-width: 960px) { .grid { grid-template-columns: repeat(2, minmax(0, 376px)); } .thumb { width: calc((100% - 30px) / 4); } }
   @media (max-width: 600px) { .grid { grid-template-columns: minmax(0, 376px); grid-auto-rows: auto; } .thumb { width: calc((100% - 10px) / 2); } }
+  .regions { color: var(--muted); font-size: 14px; line-height: 1.7; text-align: center; max-width: 820px; margin: -8px auto 24px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 20px; }
   .card h3 { margin: 0 0 8px; font-size: 16px; color: var(--accent); }
   .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
@@ -152,6 +153,7 @@
 
   <section class="feat">
     <h2 data-ko="시각 효과" data-en="Visual effects">시각 효과</h2>
+    <p class="regions" data-ko="몬드, 리월, 이나즈마, 수메르, 폰타인, 나타, 노드크라이, 스네즈나야까지, 티바트 어느 지역에서든 그 장면의 빛을 읽어 적용됩니다." data-en="From Mondstadt, Liyue, Inazuma, Sumeru, Fontaine and Natlan to Nod-Krai and Snezhnaya: wherever you are in Teyvat, it reads the light of the scene in front of you.">몬드, 리월, 이나즈마, 수메르, 폰타인, 나타, 노드크라이, 스네즈나야까지, 티바트 어느 지역에서든 그 장면의 빛을 읽어 적용됩니다.</p>
     <div class="grid">
       <div class="card"><h3 data-ko="디헤이즈" data-en="Dehaze">디헤이즈</h3>
         <p data-ko="화면 색만으로 뿌연 블룸과 원경 안개의 색과 짙기를 추정해 걷어 냅니다. 가까운 캐릭터는 건드리지 않고, 피사체와 원경이 또렷해집니다." data-en="Estimates the colour and density of the milky bloom and distance haze from the frame alone and lifts them. Near characters are untouched; subjects and the distance read clearly.">화면 색만으로 뿌연 블룸과 원경 안개의 색과 짙기를 추정해 걷어 냅니다. 가까운 캐릭터는 건드리지 않고, 피사체와 원경이 또렷해집니다.</p></div>
