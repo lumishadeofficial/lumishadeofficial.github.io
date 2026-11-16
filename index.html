@@ -102,9 +102,15 @@
 
   @media (max-width: 640px) {
     .controls .hint { display: none; }
-    nav .btn:not(.primary) { display: none; }
     .cmp .knob { width: 38px; height: 38px; }
     .cmp .tag { font-size: 11px; top: 8px; }
+  }
+  /* 휴대폰: 메뉴를 숨기지 않고 로고 아래 한 줄로 (예전엔 다운로드만 남기고 '작동 원리'/'비교 보기'를 숨겨, 휴대폰에서는 작동 원리로 갈 길이 없었음) */
+  @media (max-width: 640px) {
+    header .wrap { height: auto; flex-wrap: wrap; row-gap: 6px; padding-top: 8px; padding-bottom: 8px; }
+    nav { width: 100%; gap: 6px; flex-wrap: wrap; }
+    nav .lang { margin-right: auto; }
+    nav .btn { padding: 6px 12px; font-size: 13px; }
   }
 </style>
 </head>
@@ -185,8 +191,8 @@
 
 <script>
 (function () {
-  var N = 42;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
-  var V = '?v=' + '20261115n';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
+  var N = 43;   // 장면 수 (images/NN_before.jpg, NN_after.jpg, thumbs/NN_after.jpg). 한 장이면 넘기기 버튼과 썸네일이 감춰짐
+  var V = '?v=' + '20261117a';   // 장면 순서·이미지를 바꾸면 이 값도 바꿀 것 (브라우저가 같은 파일명의 옛 이미지를 보여 주지 않게)
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   var cmp = document.getElementById('cmp');
   var imgA = document.getElementById('imgAfter');
@@ -196,9 +202,9 @@
   var cur = 1;
   // 버전 구분: 앞의 NEW 장은 현재 버전으로 찍은 장면, 나머지는 이전 버전으로 찍은 장면. 화면에는 버전 이름만 적음
   //  새 장면을 넣을 때는 앞쪽 번호로 넣고 NEW 를 올릴 것. 버전을 올리면 VER_NEW / VER_OLD 도 고칠 것
-  var NEW = 5;
+  var NEW = 6;
   var VER_NEW = 'v1.2.0';          // 현재 버전 묶음의 이름 (같은 1.2 번호대는 한 묶음)
-  var VER_SHOT = { 1: 'v1.2.2', 2: 'v1.2.3' };   // 묶음 안에서 다른 버전으로 찍은 장면: 열었을 때 이 버전을 표시 (없으면 VER_NEW)
+  var VER_SHOT = { 1: 'v1.2.2', 2: 'v1.2.3', 3: 'v1.2.4' };   // 묶음 안에서 다른 버전으로 찍은 장면: 열었을 때 이 버전을 표시 (없으면 VER_NEW)
   var VER_OLD = 'v1.0';            // 이전 장면을 찍은 버전: 장면을 열었을 때 화면 위에 표시
   var OLD_GROUP = 'Old version';   // 썸네일 묶음 이름: 이전 장면은 버전을 하나하나 적지 않고 한 묶음으로
   var tagVer = document.getElementById('tagVer');

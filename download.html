@@ -66,7 +66,14 @@
   .more { font-size: 14px; margin-top: 14px; }
   .more a { color: var(--accent); }
   footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
-  @media (max-width: 640px) { nav .btn { display: none; } .get { padding: 22px 20px; } .dl { width: 100%; justify-content: center; } }
+  @media (max-width: 640px) { .get { padding: 22px 20px; } .dl { width: 100%; justify-content: center; } }
+  /* 휴대폰: 메뉴를 숨기지 않고 로고 아래 한 줄로 (예전엔 다운로드만 남기고 '작동 원리'/'비교 보기'를 숨겨, 휴대폰에서는 작동 원리로 갈 길이 없었음) */
+  @media (max-width: 640px) {
+    header .wrap { height: auto; flex-wrap: wrap; row-gap: 6px; padding-top: 8px; padding-bottom: 8px; }
+    nav { width: 100%; gap: 6px; flex-wrap: wrap; }
+    nav .lang { margin-right: auto; }
+    nav .btn { padding: 6px 12px; font-size: 13px; }
+  }
 </style>
 </head>
 <body>
